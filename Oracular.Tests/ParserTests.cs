@@ -366,6 +366,32 @@ namespace Oracular.Tests
 		}
 
 		[Test]
+		public void ParseFunctionCallsWithNestedExpressions()
+		{
+			var parser = makeParser (
+				referenceToken("foobar"),
+				openParenToken,
+				referenceToken("baz"),
+				operatorToken("+"),
+				referenceToken("qux"),
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<FunctionCall> (tree);
+			var asCall = tree as FunctionCall;
+			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+
+			Assert.AreEqual (1, asCall.Arguments.Length);
+			Assert.IsInstanceOf<BinaryOperation> (asCall.Arguments [0]);
+
+			var firstArg = asCall.Arguments [0] as BinaryOperation;
+
+			Assert.AreEqual ("+", firstArg.Operator);
+		}
+
+		[Test]
 		public void ParseParenthesizedExpressions()
 		{
 			var parser = makeParser (

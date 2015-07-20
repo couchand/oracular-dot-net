@@ -103,7 +103,7 @@ namespace Oracular.Spec
 
 					while (true)
 					{
-						args.Add (ParseCurrentToken ());
+						args.Add (ParseKernel ());
 
 						if (currentToken.Type == TokenType.CloseParen)
 							break;
