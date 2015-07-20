@@ -10,6 +10,16 @@ namespace Oracular.Spec.Ast
 		{
 			this.Value = value;
 		}
+
+		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
+		{
+			return walker.WalkStringLiteral (previous, Value);
+		}
+
+		public override T Walk<T> (IPostorderWalker<T> walker)
+		{
+			return walker.WalkStringLiteral (Value);
+		}
 	}
 }
 

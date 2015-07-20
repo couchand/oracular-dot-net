@@ -2,11 +2,12 @@
 
 namespace Oracular.Spec.Ast
 {
-	public class AstNode
+	public abstract class AstNode
 	{
-		public AstNode ()
-		{
-		}
+		public AstNode () {}
+
+		public abstract T Walk<T> (IPreorderWalker<T> walker, T previous);
+		public abstract T Walk<T> (IPostorderWalker<T> walker);
 	}
 }
 

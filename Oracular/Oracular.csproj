@@ -46,6 +46,8 @@
     <Compile Include="Spec\Ast\LogicalConjunction.cs" />
     <Compile Include="Spec\Ast\LogicalDisjunction.cs" />
     <Compile Include="Spec\Ast\FunctionCall.cs" />
+    <Compile Include="Spec\Walker.cs" />
+    <Compile Include="Spec\TypeChecker.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

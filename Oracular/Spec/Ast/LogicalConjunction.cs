@@ -12,6 +12,16 @@ namespace Oracular.Spec.Ast
 			this.Left = left;
 			this.Right = right;
 		}
+
+		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
+		{
+			return walker.WalkDisjunction (previous, Left, Right);
+		}
+
+		public override T Walk<T> (IPostorderWalker<T> walker)
+		{
+			return walker.WalkDisjunction (Left.Walk (walker), Right.Walk (walker));
+		}
 	}
 }
 
