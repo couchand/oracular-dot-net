@@ -67,6 +67,20 @@ namespace Oracular.Spec
 			case TokenType.String:
 				return new StringLiteral (currentToken.GetStringValue ());
 
+			case TokenType.OpenParen:
+				GetNextToken (); // consume open paren
+
+				var tok = ParseKernel ();
+
+				if (currentToken.Type != TokenType.CloseParen)
+				{
+					throw new ParserException ("expected close paren", this);
+				}
+
+				GetNextToken (); // consume close paren
+
+				return tok;
+
 			case TokenType.Reference:
 				var segments = currentToken.GetReferenceValue ();
 				if (segments.Length == 1) {
@@ -79,7 +93,37 @@ namespace Oracular.Spec
 						return new BoolLiteral (true);
 					}
 				}
-				return new Reference (currentToken.GetReferenceValue ());
+				if (nextToken.Type == TokenType.OpenParen)
+				{
+					var fnRef = new Reference (currentToken.GetReferenceValue ());
+					GetNextToken (); // consume fn reference
+					GetNextToken (); // consume open paren
+
+					var args = new List<AstNode>();
+
+					while (true)
+					{
+						args.Add (ParseCurrentToken ());
+
+						if (currentToken.Type == TokenType.CloseParen)
+							break;
+
+						if (currentToken.Type != TokenType.Comma)
+						{
+							throw new ParserException ("expected comma or close paren", this);
+						}
+
+						GetNextToken (); // consume comma
+					}
+
+					GetNextToken (); // consume close paren
+
+					return new FunctionCall (fnRef, args.ToArray ());
+				}
+				else
+				{
+					return new Reference (currentToken.GetReferenceValue ());
+				}
 
 			default:
 				throw new ParserException ("case undefined", this);
@@ -117,7 +161,7 @@ namespace Oracular.Spec
 			return new BinaryOperation (op, left, right);
 		}
 
-		public AstNode Parse()
+		public AstNode ParseKernel()
 		{
 			var result = ParseCurrentToken ();
 
@@ -125,6 +169,13 @@ namespace Oracular.Spec
 			{
 				result = ParseBinary (result);
 			}
+
+			return result;
+		}
+
+		public AstNode Parse()
+		{
+			var result = ParseKernel ();
 
 			if (currentToken.Type != TokenType.EOF)
 			{

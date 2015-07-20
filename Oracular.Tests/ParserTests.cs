@@ -31,6 +31,10 @@ namespace Oracular.Tests
 			return new Token (TokenType.Operator, op);
 		}
 
+		private static readonly Token openParenToken = new Token(TokenType.OpenParen);
+		private static readonly Token closeParenToken = new Token(TokenType.CloseParen);
+		private static readonly Token commaToken = new Token(TokenType.Comma);
+
 		private Parser makeParser (params Token[] input)
 		{
 			return new Parser(new ArrayLexer(input));
@@ -330,6 +334,61 @@ namespace Oracular.Tests
 
 			Assert.IsInstanceOf<LogicalConjunction> (rightBinary.Right);
 			Assert.IsInstanceOf<BinaryOperation> (rightBinary.Left);
+		}
+
+		[Test]
+		public void ParseFunctionCalls()
+		{
+			var parser = makeParser (
+				referenceToken("foobar"),
+				openParenToken,
+				referenceToken("baz"),
+				commaToken,
+				referenceToken("qux"),
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<FunctionCall> (tree);
+			var asCall = tree as FunctionCall;
+			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+
+			Assert.AreEqual (2, asCall.Arguments.Length);
+			Assert.IsInstanceOf<Reference> (asCall.Arguments [0]);
+			Assert.IsInstanceOf<Reference> (asCall.Arguments [1]);
+
+			var firstArg = asCall.Arguments [0] as Reference;
+			var secondArg = asCall.Arguments [1] as Reference;
+
+			Assert.AreEqual ("baz", firstArg.Value [0]);
+			Assert.AreEqual ("qux", secondArg.Value [0]);
+		}
+
+		[Test]
+		public void ParseParenthesizedExpressions()
+		{
+			var parser = makeParser (
+				numberToken(1),
+				operatorToken("*"),
+				openParenToken,
+				numberToken(2),
+				operatorToken("+"),
+				numberToken(3),
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<BinaryOperation> (tree);
+			var asBinary = tree as BinaryOperation;
+
+			Assert.AreEqual ("*", asBinary.Operator);
+
+			Assert.IsInstanceOf<BinaryOperation> (asBinary.Right);
+			var rightSide = asBinary.Right as BinaryOperation;
+
+			Assert.AreEqual ("+", rightSide.Operator);
 		}
 	}
 }
