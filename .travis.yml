@@ -3,8 +3,18 @@ solution: Oracular.sln
 
 mono:
   - latest
-  - 3.12.0
   - 3.10.0
+  - 3.8.0
+
+  - alpha
+  - beta
+  - nightly
+
+matrix:
+  allow-failures:
+    - mono: alpha
+    - mono: beta
+    - mono: nightly
 
 install:
   - nuget restore Oracular.sln
