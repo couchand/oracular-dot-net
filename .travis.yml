@@ -1,0 +1,15 @@
+language: csharp
+solution: Oracular.sln
+
+mono:
+  - latest
+  - 3.12.0
+  - 3.10.0
+
+install:
+  - nuget restore Oracular.sln
+  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+
+script:
+  - xbuild /p:Configuration=Release Oracular.sln
+  - mono ./testrunner/NUnit.Runners.2.6.4/tools/nunit-console.exe ./Oracular.Tests/bin/Release/Oracular.Tests.dll

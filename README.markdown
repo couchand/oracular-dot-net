@@ -7,6 +7,8 @@ a query builder
   * getting started
   * more information
 
+[![Build Status](https://travis-ci.org/couchand/oracular-dot-net.svg?branch=master)](https://travis-ci.org/couchand/oracular-dot-net)
+
 intro
 -----
 
