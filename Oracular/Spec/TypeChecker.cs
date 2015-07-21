@@ -120,6 +120,8 @@ namespace Oracular.Spec
 
 		public TypeSpecifier WalkOperator(string op, TypeSpecifier left, TypeSpecifier right)
 		{
+			var coalesced = left.Coalesce (right);
+
 			switch (op)
 			{
 			case "=":
@@ -128,7 +130,7 @@ namespace Oracular.Spec
 			case ">":
 			case "<=":
 			case ">=":
-				if (left == TypeSpecifier.Any || right == TypeSpecifier.Any)
+				if (left.Type == SpecType.Any || right.Type == SpecType.Any)
 				{
 					if (op == "=" || op == "!=")
 					{
@@ -139,7 +141,7 @@ namespace Oracular.Spec
 					throw new TypeCheckException (message);
 				}
 
-				if (right != left)
+				if (coalesced == null)
 				{
 					var message = String.Format ("incompatible types in {0}: {1} and {2}", op, left.ToString (), right.ToString ());
 					throw new TypeCheckException (message);
@@ -151,15 +153,15 @@ namespace Oracular.Spec
 			case "-":
 			case "*":
 			case "/":
-				if (left != TypeSpecifier.Number || right != TypeSpecifier.Number)
+				if (left.Type != SpecType.Number || right.Type != SpecType.Number)
 				{
 					var message = String.Format ("invalid types for operator {0}: {1} and {2}", op, left.ToString (), right.ToString ());
 					throw new TypeCheckException (message);
 				}
-				return left;
+				return coalesced;
 			}
 
-			return left;
+			throw new OracularException ("operator not known");
 		}
 
 		public TypeSpecifier WalkConjunction(TypeSpecifier left, TypeSpecifier right)
