@@ -38,6 +38,7 @@
     <Compile Include="ParserTests.cs" />
     <Compile Include="ArrayLexer.cs" />
     <Compile Include="TypeCheckerTests.cs" />
+    <Compile Include="TableConfigTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

@@ -50,6 +50,8 @@
     <Compile Include="Spec\TypeChecker.cs" />
     <Compile Include="Spec\TypeSpecifier.cs" />
     <Compile Include="OracularException.cs" />
+    <Compile Include="OracularTable.cs" />
+    <Compile Include="OracularSpec.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
