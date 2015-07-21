@@ -325,6 +325,82 @@ namespace Oracular.Tests
 
 			Assert.AreEqual (specType, refType.Type);
 		}
+
+		[Test]
+		public void ExpectTableToExist()
+		{
+			var reference = new Reference (new string[]{ "Foobar", "Test" });
+
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker ()));
+
+			Assert.That (ex.Message, Is.StringContaining ("table"));
+		}
+
+		[Test]
+		public void ExpectFieldToExist()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId)
+			};
+			var reference = new Reference (new string[]{ "Foobar", "Test" });
+
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+
+			Assert.That (ex.Message, Is.StringContaining ("field"));
+		}
+
+		[Test]
+		public void ExpectParentToExist()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId)
+			};
+			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
+
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+
+			Assert.That (ex.Message, Is.StringContaining ("parent"));
+		}
+
+		[Test]
+		public void ExpectParentFieldToExist()
+		{
+			var parentConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var foobarConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("ParentId", null)
+			};
+			var relationshipConfig = new List<ParentConfig>
+			{
+				new ParentConfig("Parent", null, null)
+			};
+
+			var tables = new List<OracularTable>
+			{
+				new OracularTable ("Parent", null, null, parentConfig),
+				new OracularTable ("Foobar", null, relationshipConfig, foobarConfig)
+			};
+
+			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
+
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+
+			Assert.That (ex.Message, Is.StringContaining ("field"));
+		}
 	}
 }
 
