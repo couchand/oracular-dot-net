@@ -98,7 +98,18 @@ namespace Oracular.Spec
 			var table = config.GetTable (segments [0]);
 			if (table == null)
 			{
-				throw new TypeCheckException ("table not found: " + segments [0]);
+				if (segments.Length != 1)
+				{
+					throw new TypeCheckException ("name not found: " + segments [0]);
+				}
+
+				var spec = config.GetSpec (segments [0]);
+				if (spec == null)
+				{
+					throw new TypeCheckException ("name not found: " + segments [0]);
+				}
+
+				return TypeSpecifier.GetPredicate (spec.Table);
 			}
 
 			if (segments.Length == 1)
@@ -181,8 +192,29 @@ namespace Oracular.Spec
 
 		public TypeSpecifier WalkFunctionCall(TypeSpecifier function, TypeSpecifier[] arguments)
 		{
-			// TODO: anything
-			return TypeSpecifier.Any;
+			if (function.Type != SpecType.Function)
+			{
+				throw new TypeCheckException ("not a function type: " + function.Type.ToString());
+			}
+
+			if (function.ParameterTypes.Length != arguments.Length)
+			{
+				var message = String.Format ("airity mismatch: {0} parameters and {1} arguments", function.ParameterTypes.Length, arguments.Length);
+				throw new TypeCheckException (message);
+			}
+
+			for (var i = 0; i < function.ParameterTypes.Length; i += 1)
+			{
+				var coalesced = function.ParameterTypes [i].Coalesce (arguments [i]);
+
+				if (coalesced == null)
+				{
+					var message = String.Format ("function parameter type mismatch: {0} and {1}", function.ParameterTypes [i].ToString (), arguments [i].ToString ());
+					throw new TypeCheckException (message);
+				}
+			}
+
+			return function.ReturnType;
 		}
 	}
 

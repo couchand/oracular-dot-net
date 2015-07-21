@@ -335,7 +335,7 @@ namespace Oracular.Tests
 
 			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker ()));
 
-			Assert.That (ex.Message, Is.StringContaining ("table"));
+			Assert.That (ex.Message, Is.StringContaining ("name"));
 		}
 
 		[Test]
@@ -405,6 +405,81 @@ namespace Oracular.Tests
 			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (config)));
 
 			Assert.That (ex.Message, Is.StringContaining ("field"));
+		}
+
+		[Test]
+		public void ExpectSpecToExist()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId)
+			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
+
+			var fnRef = new Reference (new string[]{ "isBaz" });
+			var foobarRef = new Reference (new string[]{ "Foobar" });
+			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+
+			var ex = Assert.Throws<TypeCheckException> (() => isFoobarBaz.Walk (new TypeChecker (config)));
+
+			Assert.That (ex.Message, Is.StringContaining ("name"));
+		}
+
+		[Test]
+		public void ExpectSpecTableToMatchInput()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId),
+				new OracularTable("SomethingElse", null, null, justAnId)
+			};
+			var specs = new List<OracularSpec>
+			{
+				new OracularSpec("isBaz", "SomethingElse", "SomethingElse.Id = null")
+			};
+			var config = new OracularConfig (tables, specs);
+
+			var fnRef = new Reference (new string[]{ "isBaz" });
+			var foobarRef = new Reference (new string[]{ "Foobar" });
+			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+
+			var ex = Assert.Throws<TypeCheckException> (() => isFoobarBaz.Walk (new TypeChecker (config)));
+
+			Assert.That (ex.Message, Is.StringContaining ("mismatch"));
+		}
+
+		[Test]
+		public void CheckSpecAgainstTable()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId)
+			};
+			var specs = new List<OracularSpec>
+			{
+				new OracularSpec("isBaz", "Foobar", "Foobar.Id = null")
+			};
+			var config = new OracularConfig (tables, specs);
+
+			var fnRef = new Reference (new string[]{ "isBaz" });
+			var foobarRef = new Reference (new string[]{ "Foobar" });
+			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+
+			var type = isFoobarBaz.Walk (new TypeChecker (config));
+
+			Assert.AreEqual (SpecType.Boolean, type.Type);
 		}
 	}
 }
