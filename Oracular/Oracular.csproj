@@ -48,6 +48,8 @@
     <Compile Include="Spec\Ast\FunctionCall.cs" />
     <Compile Include="Spec\Walker.cs" />
     <Compile Include="Spec\TypeChecker.cs" />
+    <Compile Include="Spec\TypeSpecifier.cs" />
+    <Compile Include="OracularException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

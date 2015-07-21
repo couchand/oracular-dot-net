@@ -81,7 +81,7 @@ namespace Oracular
 		}
 	}
 
-	public class TokenException : ApplicationException
+	public class TokenException : OracularException
 	{
 		public TokenException(string message, Token token)
 			: base(String.Format("Token error: {0} on token {1} of type {2}", message, token.GetRawValue(), token.Type.ToString())) {}

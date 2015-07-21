@@ -100,7 +100,7 @@ namespace Oracular.Spec
 		}
 	}
 
-	public class LexerException : ApplicationException
+	public class LexerException : OracularException
 	{
 		public LexerException (string message, string input)
 			: base(String.Format("Lexer error: {0} at input {1}", message, input)) {}

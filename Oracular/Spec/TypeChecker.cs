@@ -4,15 +4,6 @@ using Oracular.Spec.Ast;
 
 namespace Oracular.Spec
 {
-	public enum TypeSpecifier
-	{
-		Any,
-		Boolean,
-		Number,
-		String,
-		Date
-	}
-
 	public class TypeChecker : IPostorderWalker<TypeSpecifier>
 	{
 		public TypeSpecifier WalkNullLiteral()
@@ -43,22 +34,6 @@ namespace Oracular.Spec
 
 		public TypeSpecifier WalkOperator(string op, TypeSpecifier left, TypeSpecifier right)
 		{
-			if (left == TypeSpecifier.Any)
-			{
-				return right;
-			}
-
-			if (right == TypeSpecifier.Any)
-			{
-				return left;
-			}
-
-			if (right != left)
-			{
-				var message = String.Format ("incompatible types in {0}: {1} and {2}", op, left.ToString (), right.ToString ());
-				throw new TypeCheckException (message);
-			}
-
 			switch (op)
 			{
 			case "=":
@@ -67,13 +42,30 @@ namespace Oracular.Spec
 			case ">":
 			case "<=":
 			case ">=":
+				if (left == TypeSpecifier.Any || right == TypeSpecifier.Any)
+				{
+					if (op == "=" || op == "!=")
+					{
+						return TypeSpecifier.Boolean;
+					}
+
+					var message = String.Format ("invalid types for operator {0}: {1} and {2}", op, left.ToString (), right.ToString ());
+					throw new TypeCheckException (message);
+				}
+
+				if (right != left)
+				{
+					var message = String.Format ("incompatible types in {0}: {1} and {2}", op, left.ToString (), right.ToString ());
+					throw new TypeCheckException (message);
+				}
+
 				return TypeSpecifier.Boolean;
 
 			case "+":
 			case "-":
 			case "*":
 			case "/":
-				if (left != TypeSpecifier.Number)
+				if (left != TypeSpecifier.Number || right != TypeSpecifier.Number)
 				{
 					var message = String.Format ("invalid types for operator {0}: {1} and {2}", op, left.ToString (), right.ToString ());
 					throw new TypeCheckException (message);
@@ -86,43 +78,25 @@ namespace Oracular.Spec
 
 		public TypeSpecifier WalkConjunction(TypeSpecifier left, TypeSpecifier right)
 		{
-			if (left == TypeSpecifier.Any)
-			{
-				return right;
-			}
-
-			if (right == TypeSpecifier.Any)
-			{
-				return left;
-			}
-
 			if (right != TypeSpecifier.Boolean || left != TypeSpecifier.Boolean)
 			{
-				var message = String.Format ("incompatible types in conjunction: {1} and {2}", left.ToString (), right.ToString ());
+				var message = String.Format ("incompatible types in conjunction: {0} and {1}", left.ToString (), right.ToString ());
 				throw new TypeCheckException (message);
 			}
 
+			// both are bool
 			return left;
 		}
 
 		public TypeSpecifier WalkDisjunction(TypeSpecifier left, TypeSpecifier right)
 		{
-			if (left == TypeSpecifier.Any)
-			{
-				return right;
-			}
-
-			if (right == TypeSpecifier.Any)
-			{
-				return left;
-			}
-
 			if (right != TypeSpecifier.Boolean || left != TypeSpecifier.Boolean)
 			{
-				var message = String.Format ("incompatible types in disjunction: {1} and {2}", left.ToString (), right.ToString ());
+				var message = String.Format ("incompatible types in disjunction: {0} and {1}", left.ToString (), right.ToString ());
 				throw new TypeCheckException (message);
 			}
 
+			// both are bool
 			return left;
 		}
 
@@ -133,7 +107,7 @@ namespace Oracular.Spec
 		}
 	}
 
-	public class TypeCheckException : ApplicationException
+	public class TypeCheckException : OracularException
 	{
 		public TypeCheckException(string message)
 			: base(message) {}

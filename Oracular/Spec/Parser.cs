@@ -186,7 +186,7 @@ namespace Oracular.Spec
 		}
 	}
 
-	public class ParserException : ApplicationException
+	public class ParserException : OracularException
 	{
 		public ParserException(string message, Parser parser)
 			: base(String.Format("Parse error: {0} at input {1}", message, parser.currentToken.GetRawValue())) {}
