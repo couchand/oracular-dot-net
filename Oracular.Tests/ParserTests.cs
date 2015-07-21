@@ -392,6 +392,33 @@ namespace Oracular.Tests
 		}
 
 		[Test]
+		public void ParseNestedFunctionCalls()
+		{
+			var parser = makeParser (
+				referenceToken("foobar"),
+				openParenToken,
+				referenceToken("baz"),
+				openParenToken,
+				referenceToken("qux"),
+				closeParenToken,
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<FunctionCall> (tree);
+			var asCall = tree as FunctionCall;
+			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+
+			Assert.AreEqual (1, asCall.Arguments.Length);
+			Assert.IsInstanceOf<FunctionCall> (asCall.Arguments [0]);
+
+			var firstArg = asCall.Arguments [0] as FunctionCall;
+
+			Assert.AreEqual ("baz", firstArg.Function.Value[0]);
+		}
+
+		[Test]
 		public void ParseParenthesizedExpressions()
 		{
 			var parser = makeParser (
@@ -401,6 +428,34 @@ namespace Oracular.Tests
 				numberToken(2),
 				operatorToken("+"),
 				numberToken(3),
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<BinaryOperation> (tree);
+			var asBinary = tree as BinaryOperation;
+
+			Assert.AreEqual ("*", asBinary.Operator);
+
+			Assert.IsInstanceOf<BinaryOperation> (asBinary.Right);
+			var rightSide = asBinary.Right as BinaryOperation;
+
+			Assert.AreEqual ("+", rightSide.Operator);
+		}
+
+		[Test]
+		public void ParseNestedParenthesizedExpressions()
+		{
+			var parser = makeParser (
+				numberToken(1),
+				operatorToken("*"),
+				openParenToken,
+				openParenToken,
+				numberToken(2),
+				operatorToken("+"),
+				numberToken(3),
+				closeParenToken,
 				closeParenToken
 			);
 

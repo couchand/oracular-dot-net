@@ -77,8 +77,6 @@ namespace Oracular.Spec
 					throw new ParserException ("expected close paren", this);
 				}
 
-				GetNextToken (); // consume close paren
-
 				return tok;
 
 			case TokenType.Reference:
@@ -115,8 +113,6 @@ namespace Oracular.Spec
 
 						GetNextToken (); // consume comma
 					}
-
-					GetNextToken (); // consume close paren
 
 					return new FunctionCall (fnRef, args.ToArray ());
 				}
