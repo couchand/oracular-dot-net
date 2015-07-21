@@ -39,6 +39,7 @@
     <Compile Include="ArrayLexer.cs" />
     <Compile Include="TypeCheckerTests.cs" />
     <Compile Include="TableConfigTests.cs" />
+    <Compile Include="SpecConfigTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
