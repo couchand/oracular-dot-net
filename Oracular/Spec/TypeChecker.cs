@@ -52,8 +52,14 @@ namespace Oracular.Spec
 				var field = table.GetField (segments.First());
 				if (field == null)
 				{
-					var message = String.Format ("table {0} has no field {1}", table.Table, segments.First());
-					throw new TypeCheckException (message);
+					var tryParent = table.GetParent (segments.First ());
+					if (tryParent == null)
+					{
+						var message = String.Format ("table {0} has no field {1}", table.Table, segments.First());
+						throw new TypeCheckException (message);
+					}
+
+					return TypeSpecifier.GetTable (tryParent.Table);
 				}
 
 				switch (field.Type)

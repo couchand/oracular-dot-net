@@ -481,6 +481,44 @@ namespace Oracular.Tests
 
 			Assert.AreEqual (SpecType.Boolean, type.Type);
 		}
+
+		[Test]
+		public void CheckSpecAgainstParentTable()
+		{
+			var parentConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("IsBaz", FieldType.Boolean)
+			};
+			var foobarConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("ParentId", null)
+			};
+			var relationshipConfig = new List<ParentConfig>
+			{
+				new ParentConfig("Parent", null, null)
+			};
+
+			var tables = new List<OracularTable>
+			{
+				new OracularTable ("Parent", null, null, parentConfig),
+				new OracularTable ("Foobar", null, relationshipConfig, foobarConfig)
+			};
+
+			var isParentBaz = new OracularSpec ("isParentBaz", "Foobar", "isBaz(Foobar.Parent)");
+
+			var specs = new List<OracularSpec>
+			{
+				new OracularSpec("isBaz", "Parent", "Parent.IsBaz"),
+				isParentBaz
+			};
+			var config = new OracularConfig (tables, specs);
+
+			var type = isParentBaz.Spec.Walk (new TypeChecker (config));
+
+			Assert.AreEqual (SpecType.Boolean, type.Type);
+		}
 	}
 }
 
