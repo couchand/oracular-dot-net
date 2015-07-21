@@ -8,25 +8,16 @@ namespace Oracular.Spec
 {
 	public class TypeChecker : IPostorderWalker<TypeSpecifier>
 	{
-		private readonly Dictionary<string, OracularTable> tables;
+		private readonly OracularConfig config;
 
 		public TypeChecker()
 		{
-			this.tables = new Dictionary<string, OracularTable> ();
+			this.config = new OracularConfig (new List<OracularTable> (), new List<OracularSpec> ());
 		}
 
-		public TypeChecker(IEnumerable<OracularTable> tables)
+		public TypeChecker(OracularConfig config)
 		{
-			this.tables = new Dictionary<string, OracularTable> ();
-			foreach (var table in tables)
-			{
-				if (this.tables.ContainsKey (table.Table))
-				{
-					throw new OracularException ("table is duplicate: " + table.Table);
-				}
-
-				this.tables [table.Table] = table;
-			}
+			this.config = config;
 		}
 
 		public TypeSpecifier WalkNullLiteral()
@@ -87,13 +78,13 @@ namespace Oracular.Spec
 				throw new TypeCheckException (message);
 			}
 
-			if (!tables.ContainsKey (parent.Table))
+			var parentTable = config.GetTable (parent.Table);
+			if (parentTable == null)
 			{
 				var message = String.Format ("cannot find parent table {0}", parent.Table);
 				throw new TypeCheckException (message);
 			}
 
-			var parentTable = tables [parent.Table];
 			return findFieldInTable (parentTable, segments.Skip (1));
 		}
 
@@ -104,12 +95,12 @@ namespace Oracular.Spec
 				throw new OracularException ("reference has no segments");
 			}
 
-			if (!tables.ContainsKey (segments [0]))
+			var table = config.GetTable (segments [0]);
+			if (table == null)
 			{
 				throw new TypeCheckException ("table not found: " + segments [0]);
 			}
 
-			var table = tables [segments [0]];
 			if (segments.Length == 1)
 			{
 				return TypeSpecifier.GetTable (table.Table);

@@ -283,10 +283,11 @@ namespace Oracular.Tests
 			{
 				new OracularTable ("Foobar", null, null, fieldConfig)
 			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
 
 			var reference = new Reference (new string[]{ "Foobar", "Test" });
 
-			var refType = reference.Walk (new TypeChecker (tables));
+			var refType = reference.Walk (new TypeChecker (config));
 
 			Assert.AreEqual (specType, refType.Type);
 		}
@@ -318,10 +319,11 @@ namespace Oracular.Tests
 				new OracularTable ("Parent", null, null, parentConfig),
 				new OracularTable ("Foobar", null, relationshipConfig, foobarConfig)
 			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
 
 			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
 
-			var refType = reference.Walk (new TypeChecker (tables));
+			var refType = reference.Walk (new TypeChecker (config));
 
 			Assert.AreEqual (specType, refType.Type);
 		}
@@ -347,9 +349,10 @@ namespace Oracular.Tests
 			{
 				new OracularTable("Foobar", null, null, justAnId)
 			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
 			var reference = new Reference (new string[]{ "Foobar", "Test" });
 
-			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (config)));
 
 			Assert.That (ex.Message, Is.StringContaining ("field"));
 		}
@@ -365,9 +368,10 @@ namespace Oracular.Tests
 			{
 				new OracularTable("Foobar", null, null, justAnId)
 			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
 			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
 
-			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (config)));
 
 			Assert.That (ex.Message, Is.StringContaining ("parent"));
 		}
@@ -394,10 +398,11 @@ namespace Oracular.Tests
 				new OracularTable ("Parent", null, null, parentConfig),
 				new OracularTable ("Foobar", null, relationshipConfig, foobarConfig)
 			};
+			var config = new OracularConfig (tables, new List<OracularSpec> ());
 
 			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
 
-			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (tables)));
+			var ex = Assert.Throws<TypeCheckException> (() => reference.Walk (new TypeChecker (config)));
 
 			Assert.That (ex.Message, Is.StringContaining ("field"));
 		}
