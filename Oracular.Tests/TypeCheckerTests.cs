@@ -1,6 +1,7 @@
 ﻿using NUnit.Framework;
 
 using System;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 using Oracular.Spec;
@@ -264,6 +265,65 @@ namespace Oracular.Tests
 
 			Assert.That (INCOMPATIBLE_RE.IsMatch (leftEx.Message));
 			Assert.That (INCOMPATIBLE_RE.IsMatch (rightEx.Message));
+		}
+
+		[Test]
+		[TestCase(FieldType.Boolean, SpecType.Boolean)]
+		[TestCase(FieldType.Number, SpecType.Number)]
+		[TestCase(FieldType.String, SpecType.String)]
+		[TestCase(FieldType.Date, SpecType.Date)]
+		public void ReferenceTypesFromTable(FieldType fieldType, SpecType specType)
+		{
+			var fieldConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("Test", fieldType)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable ("Foobar", null, null, fieldConfig)
+			};
+
+			var reference = new Reference (new string[]{ "Foobar", "Test" });
+
+			var refType = reference.Walk (new TypeChecker (tables));
+
+			Assert.AreEqual (specType, refType.Type);
+		}
+
+		[Test]
+		[TestCase(FieldType.Boolean, SpecType.Boolean)]
+		[TestCase(FieldType.Number, SpecType.Number)]
+		[TestCase(FieldType.String, SpecType.String)]
+		[TestCase(FieldType.Date, SpecType.Date)]
+		public void ReferenceTypesFromParentTable(FieldType fieldType, SpecType specType)
+		{
+			var parentConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("Test", fieldType)
+			};
+			var foobarConfig = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("ParentId", null)
+			};
+			var relationshipConfig = new List<ParentConfig>
+			{
+				new ParentConfig("Parent", null, null)
+			};
+
+			var tables = new List<OracularTable>
+			{
+				new OracularTable ("Parent", null, null, parentConfig),
+				new OracularTable ("Foobar", null, relationshipConfig, foobarConfig)
+			};
+
+			var reference = new Reference (new string[]{ "Foobar", "Parent", "Test" });
+
+			var refType = reference.Walk (new TypeChecker (tables));
+
+			Assert.AreEqual (specType, refType.Type);
 		}
 	}
 }

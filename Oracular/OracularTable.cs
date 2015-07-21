@@ -99,6 +99,18 @@ namespace Oracular
 			}
 		}
 
+		public FieldConfig GetField(string fieldName)
+		{
+			var field = fields.FirstOrDefault (f => f.Name == fieldName);
+			return field;
+		}
+
+		public ParentConfig GetParent(string parentName)
+		{
+			var parent = parents.FirstOrDefault(p => p.Name == parentName);
+			return parent;
+		}
+
 		public readonly string Table;
 		public readonly string Id;
 
