@@ -17,8 +17,8 @@ matrix:
     - mono: nightly
 
 install:
-  - nuget restore Oracular.sln
-  - nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
+  - travis_retry nuget restore Oracular.sln
+  - travis_retry nuget install NUnit.Runners -Version 2.6.4 -OutputDirectory testrunner
 
 script:
   - xbuild /p:Configuration=Release Oracular.sln
