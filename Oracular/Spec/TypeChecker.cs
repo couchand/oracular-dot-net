@@ -155,6 +155,12 @@ namespace Oracular.Spec
 					throw new TypeCheckException (message);
 				}
 
+				if (coalesced.Type == SpecType.Boolean && op != "=" && op != "!=")
+				{
+					var message = String.Format ("invalid types for operator {0}: {1} and {2}", op, left.ToString (), right.ToString ());
+					throw new TypeCheckException(message);
+				}
+
 				return TypeSpecifier.Boolean;
 
 			case "+":

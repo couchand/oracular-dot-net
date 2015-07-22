@@ -126,6 +126,26 @@ namespace Oracular.Tests
 		}
 
 		[Test]
+		[TestCase("+")]
+		[TestCase("-")]
+		[TestCase("*")]
+		[TestCase("/")]
+		public void ErrorOnBooleanArithmetic (string op)
+		{
+			var numberVal = new NumberLiteral (42);
+			var boolVal = new BoolLiteral (false);
+
+			var left = new BinaryOperation (op, boolVal, numberVal);
+			var right = new BinaryOperation (op, numberVal, boolVal);
+
+			var leftEx = Assert.Throws<TypeCheckException> (() => left.Walk (new TypeChecker ()));
+			var rightEx = Assert.Throws<TypeCheckException> (() => right.Walk (new TypeChecker ()));
+
+			Assert.That (INVALID_RE.IsMatch (leftEx.Message));
+			Assert.That (INVALID_RE.IsMatch (rightEx.Message));
+		}
+
+		[Test]
 		[TestCase("=")]
 		[TestCase("!=")]
 		public void AllowNullEqualityComparison(string op)
@@ -161,6 +181,54 @@ namespace Oracular.Tests
 
 			Assert.That (INVALID_RE.IsMatch (leftEx.Message));
 			Assert.That (INVALID_RE.IsMatch (rightEx.Message));
+		}
+
+		[Test]
+		[TestCase("=")]
+		[TestCase("!=")]
+		[TestCase("<")]
+		[TestCase("<=")]
+		[TestCase(">")]
+		[TestCase(">=")]
+		public void AllowStringEqualityAndInequalityComparison(string op)
+		{
+			var left = new StringLiteral ("foobar");
+			var right = new StringLiteral ("baz");
+			var compared = new BinaryOperation (op, left, right);
+
+			var type = compared.Walk (new TypeChecker ());
+
+			Assert.AreEqual (SpecType.Boolean, type.Type);
+		}
+
+		[Test]
+		[TestCase("=")]
+		[TestCase("!=")]
+		public void AllowBooleanEqualityComparison(string op)
+		{
+			var left = new BoolLiteral (true);
+			var right = new BoolLiteral (false);
+			var compared = new BinaryOperation (op, left, right);
+
+			var type = compared.Walk (new TypeChecker ());
+
+			Assert.AreEqual (SpecType.Boolean, type.Type);
+		}
+
+		[Test]
+		[TestCase("<")]
+		[TestCase("<=")]
+		[TestCase(">")]
+		[TestCase(">=")]
+		public void ErrorOnBooleanInequalityComparison (string op)
+		{
+			var left = new BoolLiteral (true);
+			var right = new BoolLiteral (false);
+			var compared = new BinaryOperation (op, left, right);
+
+			var ex = Assert.Throws<TypeCheckException> (() => compared.Walk (new TypeChecker ()));
+
+			Assert.That (INVALID_RE.IsMatch (ex.Message));
 		}
 
 		[Test]
