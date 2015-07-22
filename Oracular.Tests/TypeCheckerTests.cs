@@ -19,7 +19,17 @@ namespace Oracular.Tests
 
 			var type = nullNode.Walk (new TypeChecker());
 
-			Assert.AreEqual (TypeSpecifier.Any, type);
+			Assert.AreEqual (SpecType.Any, type.Type);
+		}
+
+		[Test]
+		public void CheckBooleanLiterals ()
+		{
+			var booleanNode = new BoolLiteral (false);
+
+			var type = booleanNode.Walk (new TypeChecker ());
+
+			Assert.AreEqual (SpecType.Boolean, type.Type);
 		}
 
 		[Test]
@@ -29,7 +39,7 @@ namespace Oracular.Tests
 
 			var type = numberNode.Walk (new TypeChecker());
 
-			Assert.AreEqual (TypeSpecifier.Number, type);
+			Assert.AreEqual (SpecType.Number, type.Type);
 		}
 
 		[Test]
@@ -39,7 +49,7 @@ namespace Oracular.Tests
 
 			var type = stringNode.Walk (new TypeChecker());
 
-			Assert.AreEqual (TypeSpecifier.String, type);
+			Assert.AreEqual (SpecType.String, type.Type);
 		}
 
 		[Test]
