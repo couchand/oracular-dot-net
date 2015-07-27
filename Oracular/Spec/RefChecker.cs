@@ -42,7 +42,7 @@ namespace Oracular.Spec
 			return tables;
 		}
 
-		public string[] WalkOperator(string[] tables, string op, AstNode left, AstNode right)
+		public string[] WalkBinaryOperation(string[] tables, string op, AstNode left, AstNode right)
 		{
 			return tables;
 		}

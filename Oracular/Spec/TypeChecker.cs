@@ -126,7 +126,7 @@ namespace Oracular.Spec
 			return findFieldInTable (table, new List<string> (segments).Skip (1));
 		}
 
-		public TypeSpecifier WalkOperator(string op, TypeSpecifier left, TypeSpecifier right)
+		public TypeSpecifier WalkBinaryOperation(string op, TypeSpecifier left, TypeSpecifier right)
 		{
 			var coalesced = left.Coalesce (right);
 

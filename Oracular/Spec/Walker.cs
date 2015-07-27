@@ -11,7 +11,7 @@ namespace Oracular.Spec
 		T WalkNumberLiteral(T previous, double value);
 		T WalkStringLiteral(T previous, string value);
 
-		T WalkOperator(T previous, string value, AstNode left, AstNode right);
+		T WalkBinaryOperation(T previous, string op, AstNode left, AstNode right);
 		T WalkLogicalConjunction(T previous, AstNode left, AstNode right);
 		T WalkLogicalDisjunction(T previous, AstNode left, AstNode right);
 
@@ -26,7 +26,7 @@ namespace Oracular.Spec
 		T WalkNumberLiteral(double value);
 		T WalkStringLiteral(string value);
 
-		T WalkOperator(string value, T left, T right);
+		T WalkBinaryOperation(string op, T left, T right);
 		T WalkLogicalConjunction(T left, T right);
 		T WalkLogicalDisjunction(T left, T right);
 

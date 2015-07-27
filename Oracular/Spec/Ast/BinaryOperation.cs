@@ -17,7 +17,7 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			var next = walker.WalkOperator (previous, Operator, Left, Right);
+			var next = walker.WalkBinaryOperation (previous, Operator, Left, Right);
 			Left.Walk (walker, next);
 			Right.Walk (walker, next);
 			return next;
@@ -25,7 +25,7 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T> (IPostorderWalker<T> walker)
 		{
-			return walker.WalkOperator (Operator, Left.Walk (walker), Right.Walk (walker));
+			return walker.WalkBinaryOperation (Operator, Left.Walk (walker), Right.Walk (walker));
 		}
 	}
 }
