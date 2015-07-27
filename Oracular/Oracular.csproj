@@ -40,7 +40,6 @@
     <Compile Include="Spec\Ast\AstNode.cs" />
     <Compile Include="Spec\Ast\StringLiteral.cs" />
     <Compile Include="Spec\Ast\NullLiteral.cs" />
-    <Compile Include="Spec\Ast\BoolLiteral.cs" />
     <Compile Include="Spec\Ast\Reference.cs" />
     <Compile Include="Spec\Ast\BinaryOperation.cs" />
     <Compile Include="Spec\Ast\LogicalConjunction.cs" />
@@ -55,6 +54,7 @@
     <Compile Include="OracularConfig.cs" />
     <Compile Include="Spec\RefChecker.cs" />
     <Compile Include="Spec\Builtins.cs" />
+    <Compile Include="Spec\Ast\BooleanLiteral.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

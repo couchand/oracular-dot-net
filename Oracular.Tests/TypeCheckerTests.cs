@@ -25,7 +25,7 @@ namespace Oracular.Tests
 		[Test]
 		public void CheckBooleanLiterals ()
 		{
-			var booleanNode = new BoolLiteral (false);
+			var booleanNode = new BooleanLiteral (false);
 
 			var type = booleanNode.Walk (new TypeChecker ());
 
@@ -133,7 +133,7 @@ namespace Oracular.Tests
 		public void ErrorOnBooleanArithmetic (string op)
 		{
 			var numberVal = new NumberLiteral (42);
-			var boolVal = new BoolLiteral (false);
+			var boolVal = new BooleanLiteral (false);
 
 			var left = new BinaryOperation (op, boolVal, numberVal);
 			var right = new BinaryOperation (op, numberVal, boolVal);
@@ -206,8 +206,8 @@ namespace Oracular.Tests
 		[TestCase("!=")]
 		public void AllowBooleanEqualityComparison(string op)
 		{
-			var left = new BoolLiteral (true);
-			var right = new BoolLiteral (false);
+			var left = new BooleanLiteral (true);
+			var right = new BooleanLiteral (false);
 			var compared = new BinaryOperation (op, left, right);
 
 			var type = compared.Walk (new TypeChecker ());
@@ -222,8 +222,8 @@ namespace Oracular.Tests
 		[TestCase(">=")]
 		public void ErrorOnBooleanInequalityComparison (string op)
 		{
-			var left = new BoolLiteral (true);
-			var right = new BoolLiteral (false);
+			var left = new BooleanLiteral (true);
+			var right = new BooleanLiteral (false);
 			var compared = new BinaryOperation (op, left, right);
 
 			var ex = Assert.Throws<TypeCheckException> (() => compared.Walk (new TypeChecker ()));
@@ -259,7 +259,7 @@ namespace Oracular.Tests
 		public void ConjunctionErrorsOnNull()
 		{
 			var nullVal = new NullLiteral ();
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalConjunction (nullVal, boolVal);
 			var right = new LogicalConjunction (boolVal, nullVal);
 
@@ -274,7 +274,7 @@ namespace Oracular.Tests
 		public void DisjunctionErrorsOnNull()
 		{
 			var nullVal = new NullLiteral ();
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalDisjunction (nullVal, boolVal);
 			var right = new LogicalDisjunction (boolVal, nullVal);
 
@@ -289,7 +289,7 @@ namespace Oracular.Tests
 		public void ConjunctionErrorsOnNumbers()
 		{
 			var numberVal = new NumberLiteral (42);
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalConjunction (numberVal, boolVal);
 			var right = new LogicalConjunction (boolVal, numberVal);
 
@@ -304,7 +304,7 @@ namespace Oracular.Tests
 		public void DisjunctionErrorsOnNumbers()
 		{
 			var numberVal = new NumberLiteral (42);
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalDisjunction (numberVal, boolVal);
 			var right = new LogicalDisjunction (boolVal, numberVal);
 
@@ -319,7 +319,7 @@ namespace Oracular.Tests
 		public void ConjunctionErrorsOnStrings()
 		{
 			var stringVal = new StringLiteral ("foobar");
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalConjunction (stringVal, boolVal);
 			var right = new LogicalConjunction (boolVal, stringVal);
 
@@ -334,7 +334,7 @@ namespace Oracular.Tests
 		public void DisjunctionErrorsOnStrings()
 		{
 			var stringVal = new StringLiteral ("foobar");
-			var boolVal = new BoolLiteral (true);
+			var boolVal = new BooleanLiteral (true);
 			var left = new LogicalDisjunction (stringVal, boolVal);
 			var right = new LogicalDisjunction (boolVal, stringVal);
 

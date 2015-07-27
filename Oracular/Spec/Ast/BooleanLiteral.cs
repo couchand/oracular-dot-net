@@ -2,11 +2,11 @@
 
 namespace Oracular.Spec.Ast
 {
-	public class BoolLiteral : AstNode
+	public class BooleanLiteral : AstNode
 	{
 		public readonly bool Value;
 
-		public BoolLiteral (bool value)
+		public BooleanLiteral (bool value)
 		{
 			this.Value = value;
 		}

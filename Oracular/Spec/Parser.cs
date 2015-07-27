@@ -86,9 +86,9 @@ namespace Oracular.Spec
 					case "null":
 						return new NullLiteral ();
 					case "false":
-						return new BoolLiteral (false);
+						return new BooleanLiteral (false);
 					case "true":
-						return new BoolLiteral (true);
+						return new BooleanLiteral (true);
 					}
 				}
 				if (nextToken.Type == TokenType.OpenParen)

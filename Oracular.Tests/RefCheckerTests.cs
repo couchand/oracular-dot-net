@@ -25,7 +25,7 @@ namespace Oracular.Tests
 		[Test]
 		public void CheckBooleanDoesNothing ()
 		{
-			var boolean = new BoolLiteral (true);
+			var boolean = new BooleanLiteral (true);
 
 			var result = boolean.Walk (new RefChecker (), new [] { "Foobar" });
 
@@ -71,8 +71,8 @@ namespace Oracular.Tests
 		[Test]
 		public void CheckConjunctionDoesNothing ()
 		{
-			var yes = new BoolLiteral (true);
-			var no = new BoolLiteral (false);
+			var yes = new BooleanLiteral (true);
+			var no = new BooleanLiteral (false);
 			var conjunction = new LogicalConjunction (yes, no);
 
 			var result = conjunction.Walk (new RefChecker (), new [] { "Foobar" });
@@ -84,8 +84,8 @@ namespace Oracular.Tests
 		[Test]
 		public void CheckDisjunctionDoesNothing ()
 		{
-			var yes = new BoolLiteral (true);
-			var no = new BoolLiteral (false);
+			var yes = new BooleanLiteral (true);
+			var no = new BooleanLiteral (false);
 			var disjunction = new LogicalDisjunction (yes, no);
 
 			var result = disjunction.Walk (new RefChecker (), new [] { "Foobar" });

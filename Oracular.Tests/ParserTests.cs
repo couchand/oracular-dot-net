@@ -101,9 +101,9 @@ namespace Oracular.Tests
 			);
 
 			var tree = parser.Parse ();
-			Assert.IsInstanceOf<BoolLiteral> (tree);
+			Assert.IsInstanceOf<BooleanLiteral> (tree);
 
-			var asBool = tree as BoolLiteral;
+			var asBool = tree as BooleanLiteral;
 			Assert.AreEqual (expected, asBool.Value);
 		}
 
