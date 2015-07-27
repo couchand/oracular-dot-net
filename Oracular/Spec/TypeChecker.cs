@@ -178,7 +178,7 @@ namespace Oracular.Spec
 			throw new OracularException ("operator not known");
 		}
 
-		public TypeSpecifier WalkConjunction(TypeSpecifier left, TypeSpecifier right)
+		public TypeSpecifier WalkLogicalConjunction(TypeSpecifier left, TypeSpecifier right)
 		{
 			if (right != TypeSpecifier.Boolean || left != TypeSpecifier.Boolean)
 			{
@@ -190,7 +190,7 @@ namespace Oracular.Spec
 			return left;
 		}
 
-		public TypeSpecifier WalkDisjunction(TypeSpecifier left, TypeSpecifier right)
+		public TypeSpecifier WalkLogicalDisjunction(TypeSpecifier left, TypeSpecifier right)
 		{
 			if (right != TypeSpecifier.Boolean || left != TypeSpecifier.Boolean)
 			{

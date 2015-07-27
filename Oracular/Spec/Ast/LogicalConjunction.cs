@@ -15,7 +15,7 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			var next = walker.WalkDisjunction (previous, Left, Right);
+			var next = walker.WalkLogicalDisjunction (previous, Left, Right);
 			Left.Walk (walker, next);
 			Right.Walk (walker, next);
 			return next;
@@ -23,7 +23,7 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T> (IPostorderWalker<T> walker)
 		{
-			return walker.WalkDisjunction (Left.Walk (walker), Right.Walk (walker));
+			return walker.WalkLogicalDisjunction (Left.Walk (walker), Right.Walk (walker));
 		}
 	}
 }

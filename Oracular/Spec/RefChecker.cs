@@ -47,12 +47,12 @@ namespace Oracular.Spec
 			return tables;
 		}
 
-		public string[] WalkConjunction(string[] tables, AstNode left, AstNode right)
+		public string[] WalkLogicalConjunction(string[] tables, AstNode left, AstNode right)
 		{
 			return tables;
 		}
 
-		public string[] WalkDisjunction(string[] tables, AstNode left, AstNode right)
+		public string[] WalkLogicalDisjunction(string[] tables, AstNode left, AstNode right)
 		{
 			return tables;
 		}

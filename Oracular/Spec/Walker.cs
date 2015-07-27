@@ -12,8 +12,8 @@ namespace Oracular.Spec
 		T WalkStringLiteral(T previous, string value);
 
 		T WalkOperator(T previous, string value, AstNode left, AstNode right);
-		T WalkConjunction(T previous, AstNode left, AstNode right);
-		T WalkDisjunction(T previous, AstNode left, AstNode right);
+		T WalkLogicalConjunction(T previous, AstNode left, AstNode right);
+		T WalkLogicalDisjunction(T previous, AstNode left, AstNode right);
 
 		T WalkReference(T previous, string[] value);
 		T WalkFunctionCall(T previous, Reference function, AstNode[] arguments);
@@ -27,8 +27,8 @@ namespace Oracular.Spec
 		T WalkStringLiteral(string value);
 
 		T WalkOperator(string value, T left, T right);
-		T WalkConjunction(T left, T right);
-		T WalkDisjunction(T left, T right);
+		T WalkLogicalConjunction(T left, T right);
+		T WalkLogicalDisjunction(T left, T right);
 
 		T WalkReference(string[] value);
 		T WalkFunctionCall(T function, T[] arguments);
