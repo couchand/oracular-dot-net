@@ -53,6 +53,8 @@
     <Compile Include="OracularTable.cs" />
     <Compile Include="OracularSpec.cs" />
     <Compile Include="OracularConfig.cs" />
+    <Compile Include="Spec\RefChecker.cs" />
+    <Compile Include="Spec\Builtins.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

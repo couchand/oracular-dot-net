@@ -16,7 +16,13 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			return walker.WalkFunctionCall (previous, Function, Arguments);
+			var next = walker.WalkFunctionCall (previous, Function, Arguments);
+			Function.Walk (walker, next);
+			foreach (var arg in Arguments)
+			{
+				arg.Walk (walker, next);
+			}
+			return next;
 		}
 
 		public override T Walk<T> (IPostorderWalker<T> walker)
