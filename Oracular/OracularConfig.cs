@@ -74,7 +74,11 @@ namespace Oracular
 								throw new OracularException (message);
 							}
 
-							parents.Add (new ParentConfig ((string)parentObject["name"], (string)parentObject["table"], (string)parentObject["id"]));
+							var parentName = (string)parentObject ["name"];
+							var parentTable = parentObject.ContainsKey ("table") ? (string)parentObject ["table"] : parentName;
+							var parentId = parentObject.ContainsKey ("id") ? (string)parentObject ["id"] : parentName + "Id";
+
+							parents.Add (new ParentConfig (parentName, parentTable, parentId));
 						}
 					}
 
