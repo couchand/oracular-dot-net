@@ -41,6 +41,7 @@
     <Compile Include="TableConfigTests.cs" />
     <Compile Include="SpecConfigTests.cs" />
     <Compile Include="RefCheckerTests.cs" />
+    <Compile Include="DeserializeTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
