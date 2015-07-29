@@ -114,7 +114,7 @@ namespace Oracular.Spec
 						GetNextToken (); // consume comma
 					}
 
-					return new FunctionCall (fnRef, args.ToArray ());
+					return new MacroExpansion (fnRef, args.ToArray ());
 				}
 				else
 				{

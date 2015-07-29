@@ -500,7 +500,7 @@ namespace Oracular.Tests
 
 			var fnRef = new Reference (new string[]{ "isBaz" });
 			var foobarRef = new Reference (new string[]{ "Foobar" });
-			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+			var isFoobarBaz = new MacroExpansion (fnRef, new AstNode[]{ foobarRef });
 
 			var ex = Assert.Throws<TypeCheckException> (() => isFoobarBaz.Walk (new TypeChecker (config)));
 
@@ -527,7 +527,7 @@ namespace Oracular.Tests
 
 			var fnRef = new Reference (new string[]{ "isBaz" });
 			var foobarRef = new Reference (new string[]{ "Foobar" });
-			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+			var isFoobarBaz = new MacroExpansion (fnRef, new AstNode[]{ foobarRef });
 
 			var ex = Assert.Throws<TypeCheckException> (() => isFoobarBaz.Walk (new TypeChecker (config)));
 
@@ -553,7 +553,7 @@ namespace Oracular.Tests
 
 			var fnRef = new Reference (new string[]{ "isBaz" });
 			var foobarRef = new Reference (new string[]{ "Foobar" });
-			var isFoobarBaz = new FunctionCall (fnRef, new AstNode[]{ foobarRef });
+			var isFoobarBaz = new MacroExpansion (fnRef, new AstNode[]{ foobarRef });
 
 			var type = isFoobarBaz.Walk (new TypeChecker (config));
 

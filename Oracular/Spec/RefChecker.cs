@@ -88,14 +88,14 @@ namespace Oracular.Spec
 			return tables;
 		}
 
-		public string[] WalkFunctionCall(string[] tables, Reference fn, AstNode[] args)
+		public string[] WalkMacroExpansion(string[] tables, Reference macro, AstNode[] args)
 		{
-			if (fn.Value.Length != 1)
+			if (macro.Value.Length != 1)
 			{
 				throw new OracularException ("function reference has invalid segment count");
 			}
 
-			var name = fn.Value [0];
+			var name = macro.Value [0];
 			if (Builtins.Contains (name))
 			{
 				if (args.Length == 0)

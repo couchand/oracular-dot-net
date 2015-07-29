@@ -350,9 +350,9 @@ namespace Oracular.Tests
 
 			var tree = parser.Parse ();
 
-			Assert.IsInstanceOf<FunctionCall> (tree);
-			var asCall = tree as FunctionCall;
-			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+			Assert.IsInstanceOf<MacroExpansion> (tree);
+			var asCall = tree as MacroExpansion;
+			Assert.AreEqual ("foobar", asCall.Macro.Value[0]);
 
 			Assert.AreEqual (2, asCall.Arguments.Length);
 			Assert.IsInstanceOf<Reference> (asCall.Arguments [0]);
@@ -379,9 +379,9 @@ namespace Oracular.Tests
 
 			var tree = parser.Parse ();
 
-			Assert.IsInstanceOf<FunctionCall> (tree);
-			var asCall = tree as FunctionCall;
-			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+			Assert.IsInstanceOf<MacroExpansion> (tree);
+			var asCall = tree as MacroExpansion;
+			Assert.AreEqual ("foobar", asCall.Macro.Value[0]);
 
 			Assert.AreEqual (1, asCall.Arguments.Length);
 			Assert.IsInstanceOf<BinaryOperation> (asCall.Arguments [0]);
@@ -406,16 +406,16 @@ namespace Oracular.Tests
 
 			var tree = parser.Parse ();
 
-			Assert.IsInstanceOf<FunctionCall> (tree);
-			var asCall = tree as FunctionCall;
-			Assert.AreEqual ("foobar", asCall.Function.Value[0]);
+			Assert.IsInstanceOf<MacroExpansion> (tree);
+			var asCall = tree as MacroExpansion;
+			Assert.AreEqual ("foobar", asCall.Macro.Value[0]);
 
 			Assert.AreEqual (1, asCall.Arguments.Length);
-			Assert.IsInstanceOf<FunctionCall> (asCall.Arguments [0]);
+			Assert.IsInstanceOf<MacroExpansion> (asCall.Arguments [0]);
 
-			var firstArg = asCall.Arguments [0] as FunctionCall;
+			var firstArg = asCall.Arguments [0] as MacroExpansion;
 
-			Assert.AreEqual ("baz", firstArg.Function.Value[0]);
+			Assert.AreEqual ("baz", firstArg.Macro.Value[0]);
 		}
 
 		[Test]

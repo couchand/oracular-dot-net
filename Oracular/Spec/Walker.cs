@@ -16,7 +16,7 @@ namespace Oracular.Spec
 		T WalkLogicalDisjunction(T previous, AstNode left, AstNode right);
 
 		T WalkReference(T previous, string[] value);
-		T WalkFunctionCall(T previous, Reference function, AstNode[] arguments);
+		T WalkMacroExpansion(T previous, Reference macro, AstNode[] arguments);
 	}
 
 	public interface IPostorderWalker<T>
@@ -31,7 +31,7 @@ namespace Oracular.Spec
 		T WalkLogicalDisjunction(T left, T right);
 
 		T WalkReference(string[] value);
-		T WalkFunctionCall(T function, T[] arguments);
+		T WalkMacroExpansion(T macro, T[] arguments);
 	}
 }
 

@@ -162,7 +162,7 @@ namespace Oracular.Spec
 			}
 		}
 
-		public string WalkFunctionCall(string function, string[] arguments)
+		public string WalkMacroExpansion(string macro, string[] arguments)
 		{
 			return "NULL";
 		}

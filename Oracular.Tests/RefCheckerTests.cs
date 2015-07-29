@@ -164,7 +164,7 @@ namespace Oracular.Tests
 
 			var reference = new Reference (new [] { "Foobar" });
 			var fn = new Reference (new [] { "isBaz" });
-			var call = new FunctionCall (fn, new [] { reference });
+			var call = new MacroExpansion (fn, new [] { reference });
 
 			var initial = new []{ "Foobar" };
 
@@ -193,7 +193,7 @@ namespace Oracular.Tests
 
 			var reference = new Reference (new [] { "Foobar" });
 			var fn = new Reference (new [] { "isBaz" });
-			var call = new FunctionCall (fn, new [] { reference });
+			var call = new MacroExpansion (fn, new [] { reference });
 
 			var initial = new []{ "Foobar" };
 
@@ -222,7 +222,7 @@ namespace Oracular.Tests
 				new StringLiteral("Fingerling")
 			);
 
-			var call = new FunctionCall(
+			var call = new MacroExpansion(
 				new Reference(new [] { "ANY" }),
 				new [] { fingerlingPotatoes }
 			);
@@ -262,7 +262,7 @@ namespace Oracular.Tests
 				new StringLiteral("Fingerling")
 			);
 
-			var call = new FunctionCall(
+			var call = new MacroExpansion(
 				new Reference(new [] { "ANY" }),
 				new AstNode[] {
 					new Reference(new [] { "Potato" }),

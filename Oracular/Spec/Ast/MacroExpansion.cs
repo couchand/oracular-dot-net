@@ -3,21 +3,21 @@ using System.Collections.Generic;
 
 namespace Oracular.Spec.Ast
 {
-	public class FunctionCall : AstNode
+	public class MacroExpansion : AstNode
 	{
-		public readonly Reference Function;
+		public readonly Reference Macro;
 		public readonly AstNode[] Arguments;
 
-		public FunctionCall (Reference fn, AstNode[] args)
+		public MacroExpansion (Reference macro, AstNode[] args)
 		{
-			this.Function = fn;
+			this.Macro = macro;
 			this.Arguments = args;
 		}
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			var next = walker.WalkFunctionCall (previous, Function, Arguments);
-			Function.Walk (walker, next);
+			var next = walker.WalkMacroExpansion (previous, Macro, Arguments);
+			Macro.Walk (walker, next);
 			foreach (var arg in Arguments)
 			{
 				arg.Walk (walker, next);
@@ -34,7 +34,7 @@ namespace Oracular.Spec.Ast
 				args.Add(Arguments [i].Walk (walker));
 			}
 
-			return walker.WalkFunctionCall (Function.Walk (walker), args.ToArray());
+			return walker.WalkMacroExpansion (Macro.Walk (walker), args.ToArray());
 		}
 	}
 }
