@@ -42,6 +42,7 @@
     <Compile Include="SpecConfigTests.cs" />
     <Compile Include="RefCheckerTests.cs" />
     <Compile Include="DeserializeTests.cs" />
+    <Compile Include="SqlizerTests.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

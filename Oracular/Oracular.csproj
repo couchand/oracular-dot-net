@@ -59,6 +59,7 @@
     <Compile Include="Spec\RefChecker.cs" />
     <Compile Include="Spec\Builtins.cs" />
     <Compile Include="Spec\Ast\BooleanLiteral.cs" />
+    <Compile Include="Spec\Sqlizer.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
