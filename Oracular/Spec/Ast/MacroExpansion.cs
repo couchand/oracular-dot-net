@@ -16,25 +16,12 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			var next = walker.WalkMacroExpansion (previous, Macro, Arguments);
-			Macro.Walk (walker, next);
-			foreach (var arg in Arguments)
-			{
-				arg.Walk (walker, next);
-			}
-			return next;
+			return walker.WalkMacroExpansion (previous, Macro, Arguments);
 		}
 
 		public override T Walk<T> (IPostorderWalker<T> walker)
 		{
-			var args = new List<T> ();
-
-			for (var i = 0; i < Arguments.Length; i++)
-			{
-				args.Add(Arguments [i].Walk (walker));
-			}
-
-			return walker.WalkMacroExpansion (Macro.Walk (walker), args.ToArray());
+			return walker.WalkMacroExpansion (Macro, Arguments);
 		}
 	}
 }

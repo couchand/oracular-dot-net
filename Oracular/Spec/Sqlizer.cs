@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 
+using Oracular.Spec.Ast;
+
 namespace Oracular.Spec
 {
 	public class Sqlizer : IPostorderWalker<string>
@@ -162,7 +164,7 @@ namespace Oracular.Spec
 			}
 		}
 
-		public string WalkMacroExpansion(string macro, string[] arguments)
+		public string WalkMacroExpansion(Reference macro, AstNode[] arguments)
 		{
 			return "NULL";
 		}

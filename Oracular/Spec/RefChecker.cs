@@ -119,6 +119,8 @@ namespace Oracular.Spec
 					.ToArray();
 			}
 
+			var refChecked = macro.Walk (this, tables);
+
 			// TODO
 			return tables;
 		}

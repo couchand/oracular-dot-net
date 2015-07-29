@@ -202,31 +202,34 @@ namespace Oracular.Spec
 			return left;
 		}
 
-		public TypeSpecifier WalkMacroExpansion(TypeSpecifier macro, TypeSpecifier[] arguments)
+		public TypeSpecifier WalkMacroExpansion(Reference macro, AstNode[] arguments)
 		{
-			if (macro.Type != SpecType.Function)
+			var macroType = macro.Walk (this);
+
+			if (macroType.Type != SpecType.Function)
 			{
-				throw new TypeCheckException ("not a function type: " + macro.Type.ToString());
+				throw new TypeCheckException ("not a function type: " + macroType.Type.ToString());
 			}
 
-			if (macro.ParameterTypes.Length != arguments.Length)
+			if (macroType.ParameterTypes.Length != arguments.Length)
 			{
-				var message = String.Format ("airity mismatch: {0} parameters and {1} arguments", macro.ParameterTypes.Length, arguments.Length);
+				var message = String.Format ("airity mismatch: {0} parameters and {1} arguments", macroType.ParameterTypes.Length, arguments.Length);
 				throw new TypeCheckException (message);
 			}
 
-			for (var i = 0; i < macro.ParameterTypes.Length; i += 1)
+			for (var i = 0; i < macroType.ParameterTypes.Length; i += 1)
 			{
-				var coalesced = macro.ParameterTypes [i].Coalesce (arguments [i]);
+				var argumentType = arguments [i].Walk (this);
+				var coalesced = macroType.ParameterTypes [i].Coalesce (argumentType);
 
 				if (coalesced == null)
 				{
-					var message = String.Format ("function parameter type mismatch: {0} and {1}", macro.ParameterTypes [i].ToString (), arguments [i].ToString ());
+					var message = String.Format ("function parameter type mismatch: {0} and {1}", macroType.ParameterTypes [i].ToString (), arguments [i].ToString ());
 					throw new TypeCheckException (message);
 				}
 			}
 
-			return macro.ReturnType;
+			return macroType.ReturnType;
 		}
 	}
 

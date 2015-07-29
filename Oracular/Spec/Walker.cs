@@ -31,7 +31,7 @@ namespace Oracular.Spec
 		T WalkLogicalDisjunction(T left, T right);
 
 		T WalkReference(string[] value);
-		T WalkMacroExpansion(T macro, T[] arguments);
+		T WalkMacroExpansion(Reference macro, AstNode[] arguments);
 	}
 }
 
