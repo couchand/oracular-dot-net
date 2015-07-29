@@ -34,6 +34,7 @@ namespace Oracular.Tests
 		}
 
 		[Test]
+		[TestCase("tautology", "User", "true")]
 		[TestCase("isManager", "User", "User.Type = 'Manager'")]
 		[TestCase("isCustomer", "Account", "Account.Type = \"Customer\"")]
 		[TestCase("customerWithManagerOwner", "Account", "isCustomer(Account) AND isManager(Account.Owner)")]
@@ -45,6 +46,8 @@ namespace Oracular.Tests
 			Assert.AreEqual (name, spec.Name);
 			Assert.AreEqual (table, spec.Table);
 			Assert.AreEqual (source, spec.Source);
+
+			Assert.AreNotEqual (0, spec.Spec.Id);
 		}
 	}
 }
