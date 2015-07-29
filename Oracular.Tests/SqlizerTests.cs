@@ -526,6 +526,48 @@ namespace Oracular.Tests
 
 			Assert.AreEqual (2, builder.JoinTables.Count ());
 		}
+
+		[Test]
+		public void SerializeSpecReferences ()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var idAndBarId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("BarId", null)
+			};
+			var barRelationship = new List<ParentConfig>
+			{
+				new ParentConfig("Bar", null, null)
+			};
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				new OracularTable("Bar", null, null, justAnId)
+			};
+			var specs = new List<OracularSpec>
+			{
+				new OracularSpec("barHasId", "Bar", "Bar.Id != null")
+			};
+			var config = new OracularConfig (tables, specs);
+
+			var foobarReference = new Reference (new [] { "Foo", "Bar" });
+			var specReference = new Reference (new [] { "barHasId" });
+			var macroExpansion = new MacroExpansion (specReference, new [] { foobarReference });
+
+			var builder = new Sqlizer (config);
+			var sql = macroExpansion.Walk (builder);
+
+			Assert.AreEqual ("([Foo.Bar].[Id] != NULL)", sql);
+
+			Assert.AreEqual (1, builder.JoinTables.Count ());
+			var joinClause = builder.JoinTables.First();
+
+			Assert.AreEqual ("INNER JOIN [Bar] [Foo.Bar] ON [Foo.Bar].[Id] = [Foo].[BarId]", joinClause);
+		}
 	}
 }
 

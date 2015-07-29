@@ -166,7 +166,35 @@ namespace Oracular.Spec
 
 		public string WalkMacroExpansion(Reference macro, AstNode[] arguments)
 		{
-			return "NULL";
+			if (macro.Value.Length != 1)
+			{
+				throw new OracularException ("macro reference has invalid segment count");
+			}
+
+			var spec = config.GetSpec (macro.Value [0]);
+			if (spec != null)
+			{
+				if (arguments.Length != 1)
+				{
+					throw new OracularException ("referenced spec has invalid argument count");
+				}
+
+				var rel = arguments [0].Walk (this);
+				rel = rel.Substring (1, rel.Length - 2);
+				var nestedEnvironment = new Sqlizer (config, rel);
+
+				var expanded = spec.Spec.Walk (nestedEnvironment);
+
+				foreach (var k in nestedEnvironment.joinTables.Keys)
+				{
+					joinTables [k] = nestedEnvironment.joinTables [k];
+				}
+
+				return expanded;
+			}
+
+			var message = String.Format("reference not found: {0}", macro.Value [0]);
+			throw new OracularException(message);
 		}
 
 		public IEnumerable<string> JoinTables => joinTables.Values;
