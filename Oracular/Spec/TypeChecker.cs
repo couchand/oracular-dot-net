@@ -109,6 +109,14 @@ namespace Oracular.Spec
 					throw new TypeCheckException ("name not found: " + segments [0]);
 				}
 
+				if (Builtins.Contains (segments [0]))
+				{
+					return TypeSpecifier.GetFunction (
+						TypeSpecifier.Boolean,
+						new [] { TypeSpecifier.Any, TypeSpecifier.Any }
+					);
+				}
+
 				var spec = config.GetSpec (segments [0]);
 				if (spec == null)
 				{

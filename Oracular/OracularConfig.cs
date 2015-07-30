@@ -4,6 +4,8 @@ using System.IO;
 using System.Json;
 using System.Linq;
 
+using Oracular.Spec;
+
 namespace Oracular
 {
 	public class OracularConfig
@@ -169,6 +171,21 @@ namespace Oracular
 			}
 
 			return specs [name];
+		}
+
+		public void Check()
+		{
+			var typechecker = new TypeChecker (this);
+			foreach (var spec in specs.Values)
+			{
+				spec.Spec.Walk (typechecker);
+			}
+
+			var refchecker = new RefChecker (this);
+			foreach (var spec in specs.Values)
+			{
+				spec.Spec.Walk (refchecker, new [] { spec.Table });
+			}
 		}
 
 		public IEnumerable<OracularTable> Tables => tables.Values;

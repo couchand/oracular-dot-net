@@ -86,6 +86,7 @@ namespace Oracular.Tests
 		public void TestBasicUsage ()
 		{
 			var parsed = OracularConfig.Deserialize (CRM_CONFIG);
+			parsed.Check ();
 
 			var spec = parsed.GetSpec ("isManager");
 
@@ -100,6 +101,7 @@ namespace Oracular.Tests
 		public void TestSpecReferences ()
 		{
 			var parsed = OracularConfig.Deserialize (CRM_CONFIG);
+			parsed.Check ();
 
 			var one = parsed.GetSpec ("ownerIsManager1");
 			var two = parsed.GetSpec ("ownerIsManager2");
@@ -119,6 +121,7 @@ namespace Oracular.Tests
 		public void TestJoinMacros ()
 		{
 			var parsed = OracularConfig.Deserialize (CRM_CONFIG);
+			parsed.Check ();
 
 			var one = parsed.GetSpec ("hasManagerOwnedAccount1");
 			var two = parsed.GetSpec ("hasManagerOwnedAccount2");
