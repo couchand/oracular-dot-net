@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Json;
 using System.Linq;
 
@@ -103,6 +104,22 @@ namespace Oracular
 			}
 
 			return new OracularConfig (tables, specs);
+		}
+
+		public static OracularConfig LoadFromFile(string path)
+		{
+			string source;
+			try
+			{
+				source = File.ReadAllText(path);
+			}
+			catch (Exception ex)
+			{
+				var message = String.Format("Unable to read source file: {0}", path);
+				throw new OracularException (message);
+			}
+
+			return Deserialize(source);
 		}
 
 		private Dictionary<string, OracularTable> tables;
