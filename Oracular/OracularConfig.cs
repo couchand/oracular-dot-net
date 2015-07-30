@@ -127,6 +127,11 @@ namespace Oracular
 			{
 				throw new OracularException ("duplicate spec " + ex.ParamName);
 			}
+
+			foreach (var spec in this.specs.Values)
+			{
+				spec.config = this;
+			}
 		}
 
 		public OracularTable GetTable(string name)

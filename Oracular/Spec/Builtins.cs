@@ -80,7 +80,7 @@ namespace Oracular
 				nestedSpec.Walk(builder)
 			);
 
-			var nestedJoins = nestedSpec == null ? "" : String.Join("\n",
+			var nestedJoins = nestedSpec == null ? "" : "\n" + String.Join("\n",
 				builder.JoinTables
 			);
 
