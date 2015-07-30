@@ -98,7 +98,7 @@ LEFT JOIN [{4}] ON [{4}].[{5}] = [{1}].[{2}]{6}{7}
 			expansion.With.Add (nestedQuery);
 			expansion.Join.Add (mainJoin);
 
-			expansion.Where = String.Format ("[{0}].[{1}]", withTable, macroField);
+			expansion.Where = String.Format ("[{0}].[{1}] = 1", withTable, macroField);
 
 			return expansion;
 		}

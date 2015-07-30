@@ -632,7 +632,7 @@ namespace Oracular.Tests
 			var builder = new Sqlizer (bar, config);
 			var sql = macroExpansion.Walk (builder);
 
-			var expected = String.Format ("[AnnotatedBar{0}].[AnyFoo{0}]", idNotNull.Id);
+			var expected = String.Format ("[AnnotatedBar{0}].[AnyFoo{0}] = 1", idNotNull.Id);
 			Assert.AreEqual (expected, sql);
 
 			Assert.AreEqual (1, builder.JoinTables.Count ());
