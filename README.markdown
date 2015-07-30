@@ -27,7 +27,8 @@ Install the package with NuGet.
 Load and check your config file.
 
 ```csharp
-var config = OracularConfig.LoadFromFile(HostingEnvironment.MapPath(@"~/App_Data/oracular.json"));
+var path = HostingEnvironment.MapPath(@"~/App_Data/oracular.json");
+var config = OracularConfig.LoadFromFile(path);
 
 config.Check();
 ```
