@@ -55,6 +55,7 @@ namespace Oracular
 								type = FieldType.Number;
 								break;
 							case "boolean":
+							case "bool": // deprecated
 								type = FieldType.Boolean;
 								break;
 							case "date":
