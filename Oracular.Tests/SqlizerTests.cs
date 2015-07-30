@@ -11,12 +11,21 @@ namespace Oracular.Tests
 	[TestFixture]
 	public class SqlizerTests
 	{
+		private OracularTable foobarTable()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			return new OracularTable ("Foobar", null, null, justAnId);
+		}
+
 		[Test]
 		public void SerializeNull ()
 		{
 			var nullNode = new NullLiteral ();
 
-			var nullSql = nullNode.Walk (new Sqlizer ());
+			var nullSql = nullNode.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual ("NULL", nullSql);
 		}
@@ -26,7 +35,7 @@ namespace Oracular.Tests
 		{
 			var trueNode = new BooleanLiteral (true);
 
-			var trueSql = trueNode.Walk (new Sqlizer ());
+			var trueSql = trueNode.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual ("TRUE", trueSql);
 		}
@@ -36,7 +45,7 @@ namespace Oracular.Tests
 		{
 			var falseNode = new BooleanLiteral (false);
 
-			var falseSql = falseNode.Walk (new Sqlizer ());
+			var falseSql = falseNode.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual ("FALSE", falseSql);
 		}
@@ -51,7 +60,7 @@ namespace Oracular.Tests
 		{
 			var numberNode = new NumberLiteral (number);
 
-			var numberSql = numberNode.Walk (new Sqlizer ());
+			var numberSql = numberNode.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual (expected, numberSql);
 		}
@@ -64,7 +73,7 @@ namespace Oracular.Tests
 		{
 			var stringNode = new StringLiteral (value);
 
-			var stringSql = stringNode.Walk (new Sqlizer ());
+			var stringSql = stringNode.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual (expected, stringSql);
 		}
@@ -87,7 +96,7 @@ namespace Oracular.Tests
 				new NumberLiteral (2)
 			);
 
-			var binarySql = binaryNode.Walk (new Sqlizer ());
+			var binarySql = binaryNode.Walk (new Sqlizer (foobarTable()));
 
 			var expected = String.Format ("(1 {0} 2)", op);
 			Assert.AreEqual (expected, binarySql);
@@ -101,7 +110,7 @@ namespace Oracular.Tests
 				new BooleanLiteral(false)
 			);
 
-			var sql = conjunction.Walk (new Sqlizer ());
+			var sql = conjunction.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual ("(TRUE AND FALSE)", sql);
 		}
@@ -114,7 +123,7 @@ namespace Oracular.Tests
 				new BooleanLiteral(false)
 			);
 
-			var sql = disjunction.Walk (new Sqlizer ());
+			var sql = disjunction.Walk (new Sqlizer (foobarTable()));
 
 			Assert.AreEqual ("(TRUE OR FALSE)", sql);
 		}
@@ -122,20 +131,17 @@ namespace Oracular.Tests
 		[Test]
 		public void SerializeTableName ()
 		{
-			var justAnId = new List<FieldConfig>
-			{
-				new FieldConfig("Id", null)
-			};
+			var foobar = foobarTable ();
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foobar", null, null, justAnId)
+				foobar
 			};
 			var specs = new List<OracularSpec> ();
 			var config = new OracularConfig (tables, specs);
 
 			var foobarReference = new Reference (new [] { "Foobar" });
 
-			var sql = foobarReference.Walk (new Sqlizer (config));
+			var sql = foobarReference.Walk (new Sqlizer (foobar, config));
 
 			Assert.AreEqual ("[Foobar]", sql);
 		}
@@ -143,20 +149,17 @@ namespace Oracular.Tests
 		[Test]
 		public void SerializeTableAsAlias ()
 		{
-			var justAnId = new List<FieldConfig>
-			{
-				new FieldConfig("Id", null)
-			};
+			var foobar = foobarTable ();
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foobar", null, null, justAnId)
+				foobar
 			};
 			var specs = new List<OracularSpec> ();
 			var config = new OracularConfig (tables, specs);
 
 			var foobarReference = new Reference (new [] { "Foobar" });
 
-			var sql = foobarReference.Walk (new Sqlizer (config, "Alias"));
+			var sql = foobarReference.Walk (new Sqlizer (foobar, config, "Alias"));
 
 			Assert.AreEqual ("[Alias]", sql);
 		}
@@ -164,20 +167,17 @@ namespace Oracular.Tests
 		[Test]
 		public void SerializeFieldName ()
 		{
-			var justAnId = new List<FieldConfig>
-			{
-				new FieldConfig("Id", null)
-			};
+			var foobar = foobarTable ();
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foobar", null, null, justAnId)
+				foobar
 			};
 			var specs = new List<OracularSpec> ();
 			var config = new OracularConfig (tables, specs);
 
 			var foobarReference = new Reference (new [] { "Foobar", "Id" });
 
-			var sql = foobarReference.Walk (new Sqlizer (config));
+			var sql = foobarReference.Walk (new Sqlizer (foobar, config));
 
 			Assert.AreEqual ("[Foobar].[Id]", sql);
 		}
@@ -185,20 +185,17 @@ namespace Oracular.Tests
 		[Test]
 		public void SerializeFieldOnAlias ()
 		{
-			var justAnId = new List<FieldConfig>
-			{
-				new FieldConfig("Id", null)
-			};
+			var foobar = foobarTable ();
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foobar", null, null, justAnId)
+				foobar
 			};
 			var specs = new List<OracularSpec> ();
 			var config = new OracularConfig (tables, specs);
 
 			var foobarReference = new Reference (new [] { "Foobar", "Id" });
 
-			var sql = foobarReference.Walk (new Sqlizer (config, "Alias"));
+			var sql = foobarReference.Walk (new Sqlizer (foobar, config, "Alias"));
 
 			Assert.AreEqual ("[Alias].[Id]", sql);
 		}
@@ -219,9 +216,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, null, justAnId)
 			};
 			var specs = new List<OracularSpec> ();
@@ -229,7 +227,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar" });
 
-			var builder = new Sqlizer (config);
+			var builder = new Sqlizer (foo, config);
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Foo.Bar]", sql);
@@ -256,9 +254,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, null, justAnId)
 			};
 			var specs = new List<OracularSpec> ();
@@ -266,7 +265,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar" });
 
-			var builder = new Sqlizer (config, "Alias");
+			var builder = new Sqlizer (foo, config, "Alias");
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Alias.Bar]", sql);
@@ -293,9 +292,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, null, justAnId)
 			};
 			var specs = new List<OracularSpec> ();
@@ -303,7 +303,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Id" });
 
-			var builder = new Sqlizer (config);
+			var builder = new Sqlizer (foo, config);
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Foo.Bar].[Id]", sql);
@@ -330,9 +330,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, null, justAnId)
 			};
 			var specs = new List<OracularSpec> ();
@@ -340,7 +341,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Id" });
 
-			var builder = new Sqlizer (config, "Alias");
+			var builder = new Sqlizer (foo, config, "Alias");
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Alias.Bar].[Id]", sql);
@@ -376,9 +377,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, bazRelationship, idAndBazId),
 				new OracularTable("Baz", null, null, justAnId)
 			};
@@ -387,7 +389,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Baz" });
 
-			var builder = new Sqlizer (config);
+			var builder = new Sqlizer (foo, config);
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Foo.Bar.Baz]", sql);
@@ -420,9 +422,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, bazRelationship, idAndBazId),
 				new OracularTable("Baz", null, null, justAnId)
 			};
@@ -431,7 +434,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Baz" });
 
-			var builder = new Sqlizer (config, "Alias");
+			var builder = new Sqlizer (foo, config, "Alias");
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Alias.Bar.Baz]", sql);
@@ -464,9 +467,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, bazRelationship, idAndBazId),
 				new OracularTable("Baz", null, null, justAnId)
 			};
@@ -475,7 +479,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Baz", "Id" });
 
-			var builder = new Sqlizer (config);
+			var builder = new Sqlizer (foo, config);
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Foo.Bar.Baz].[Id]", sql);
@@ -508,9 +512,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, bazRelationship, idAndBazId),
 				new OracularTable("Baz", null, null, justAnId)
 			};
@@ -519,7 +524,7 @@ namespace Oracular.Tests
 
 			var foobarReference = new Reference (new [] { "Foo", "Bar", "Baz", "Id" });
 
-			var builder = new Sqlizer (config, "Alias");
+			var builder = new Sqlizer (foo, config, "Alias");
 			var sql = foobarReference.Walk (builder);
 
 			Assert.AreEqual ("[Alias.Bar.Baz].[Id]", sql);
@@ -543,9 +548,10 @@ namespace Oracular.Tests
 			{
 				new ParentConfig("Bar", null, null)
 			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
 			var tables = new List<OracularTable>
 			{
-				new OracularTable("Foo", null, barRelationship, idAndBarId),
+				foo,
 				new OracularTable("Bar", null, null, justAnId)
 			};
 			var specs = new List<OracularSpec>
@@ -558,7 +564,7 @@ namespace Oracular.Tests
 			var specReference = new Reference (new [] { "barHasId" });
 			var macroExpansion = new MacroExpansion (specReference, new [] { foobarReference });
 
-			var builder = new Sqlizer (config);
+			var builder = new Sqlizer (foo, config);
 			var sql = macroExpansion.Walk (builder);
 
 			Assert.AreEqual ("([Foo.Bar].[Id] != NULL)", sql);
@@ -567,6 +573,61 @@ namespace Oracular.Tests
 			var joinClause = builder.JoinTables.First();
 
 			Assert.AreEqual ("INNER JOIN [Bar] [Foo.Bar] ON [Foo.Bar].[Id] = [Foo].[BarId]", joinClause);
+		}
+
+		[Test]
+		public void SerializeReducer()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var idAndBarId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("BarId", null)
+			};
+			var barRelationship = new List<ParentConfig>
+			{
+				new ParentConfig("Bar", null, null)
+			};
+			var foo = new OracularTable ("Foo", null, barRelationship, idAndBarId);
+			var bar = new OracularTable("Bar", null, null, justAnId);
+			var tables = new List<OracularTable>{ foo, bar };
+			var specs = new List<OracularSpec> ();
+			var config = new OracularConfig (tables, specs);
+
+			var anyReference = new Reference (new[]{ "ANY" });
+			var fooReference = new Reference (new[]{ "Foo" });
+			var idNotNull = new BinaryOperation ("!=",
+				new Reference (new[]{ "Foo", "Id" }),
+				new NullLiteral ()
+			);
+
+			var macroExpansion = new MacroExpansion (anyReference, new AstNode[] { fooReference, idNotNull });
+
+			var builder = new Sqlizer (bar, config);
+			var sql = macroExpansion.Walk (builder);
+
+			var expected = String.Format ("[AnnotatedBar{0}].[AnyFoo{0}]", idNotNull.Id);
+			Assert.AreEqual (expected, sql);
+
+			Assert.AreEqual (1, builder.JoinTables.Count ());
+			var join = builder.JoinTables.First ();
+
+			expected = String.Format ("LEFT JOIN [AnnotatedBar{0}] ON [AnnotatedBar{0}].[Id] = [Bar].[Id]", idNotNull.Id);
+			Assert.AreEqual (expected, join);
+
+			Assert.AreEqual (1, builder.CommonTableExpressions.Count ());
+			var annotated = builder.CommonTableExpressions.First ();
+
+			expected = String.Format (@"[AnnotatedBar{0}] AS (
+SELECT [Bar].[Id], 1 [AnyFoo{0}]
+FROM [Bar]
+LEFT JOIN [Foo] ON [Foo].[BarId] = [Bar].[Id]
+WHERE ([Foo].[Id] != NULL)
+)", idNotNull.Id);
+			Assert.AreEqual (expected, annotated);
 		}
 	}
 }

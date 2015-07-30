@@ -111,6 +111,12 @@ namespace Oracular
 			return parent;
 		}
 
+		public ParentConfig GetRelationshipTo(string parentTable)
+		{
+			var parent = parents.FirstOrDefault (p => p.Table == parentTable);
+			return parent;
+		}
+
 		public readonly string Table;
 		public readonly string Id;
 

@@ -9,21 +9,27 @@ namespace Oracular.Spec
 	public class Sqlizer : IPostorderWalker<string>
 	{
 		readonly OracularConfig config;
+		readonly OracularTable rootTable;
 		readonly string rootAlias;
 		readonly Dictionary<string, string> joinTables;
+		readonly List<string> otherJoins;
+		readonly List<string> commonTableExpressions;
 
-		public Sqlizer()
-			: this(new OracularConfig (new List<OracularTable> (), new List<OracularSpec> ())) {}
+		public Sqlizer(OracularTable root)
+			: this(root, new OracularConfig (new List<OracularTable> (), new List<OracularSpec> ())) {}
 
-		public Sqlizer(OracularConfig config)
-			:this(config, null) {}
+		public Sqlizer(OracularTable root, OracularConfig config)
+			:this(root, config, null) {}
 
-		public Sqlizer(OracularConfig config, string alias)
+		public Sqlizer(OracularTable root, OracularConfig config, string alias)
 		{
+			this.rootTable = root;
 			this.config = config;
 			this.rootAlias = alias;
 
 			this.joinTables = new Dictionary<string, string> ();
+			this.otherJoins = new List<string> ();
+			this.commonTableExpressions = new List<string> ();
 		}
 
 		public string WalkNullLiteral()
@@ -171,7 +177,49 @@ namespace Oracular.Spec
 				throw new OracularException ("macro reference has invalid segment count");
 			}
 
-			var spec = config.GetSpec (macro.Value [0]);
+			var name = macro.Value [0];
+
+			if (Builtins.Contains (name))
+			{
+				var builtin = Builtins.Get (name);
+
+				if (arguments.Length == 0)
+				{
+					throw new OracularException ("macro reference has invalid argument count");
+				}
+
+				var reference = arguments [0] as Reference;
+				if (reference == null)
+				{
+					throw new OracularException ("macro reference requires reference parameter");
+				}
+
+				if (reference.Value.Length != 1 && reference.Value.Length != 2)
+				{
+					throw new OracularException ("macro reference parameter has invalid segment count");
+				}
+
+				var child = config.GetTable (reference.Value [0]);
+				if (child == null)
+				{
+					var err = String.Format ("table not found for macro reference: {0}", reference.Value[0]);
+					throw new OracularException (err);
+				}
+
+				if (arguments.Length == 1 || arguments.Length == 2)
+				{
+					var expansion = builtin.ExpandMacro (config, rootTable, child, reference, arguments.Length == 1 ? null : arguments [1]);
+
+					otherJoins.AddRange (expansion.Join);
+					commonTableExpressions.AddRange (expansion.With);
+
+					return expansion.Where;
+				}
+
+				throw new OracularException ("macro reference has invalid argument count");
+			}
+
+			var spec = config.GetSpec (name);
 			if (spec != null)
 			{
 				if (arguments.Length != 1)
@@ -179,9 +227,11 @@ namespace Oracular.Spec
 					throw new OracularException ("referenced spec has invalid argument count");
 				}
 
+				var specTable = config.GetTable (spec.Table);
+
 				var rel = arguments [0].Walk (this);
 				rel = rel.Substring (1, rel.Length - 2);
-				var nestedEnvironment = new Sqlizer (config, rel);
+				var nestedEnvironment = new Sqlizer (specTable, config, rel);
 
 				var expanded = spec.Spec.Walk (nestedEnvironment);
 
@@ -197,7 +247,8 @@ namespace Oracular.Spec
 			throw new OracularException(message);
 		}
 
-		public IEnumerable<string> JoinTables => joinTables.Values;
+		public IEnumerable<string> JoinTables => joinTables.Values.Concat(otherJoins);
+		public IEnumerable<string> CommonTableExpressions => commonTableExpressions;
 	}
 }
 
