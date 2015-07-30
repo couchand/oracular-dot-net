@@ -183,6 +183,29 @@ namespace Oracular.Tests
 		}
 
 		[Test]
+		public void SerializeBooleanField ()
+		{
+			var idAndBoolean = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("IsBaz", FieldType.Boolean)
+			};
+			var foobar = new OracularTable ("Foobar", null, null, idAndBoolean);
+			var tables = new List<OracularTable>
+			{
+				foobar
+			};
+			var specs = new List<OracularSpec> ();
+			var config = new OracularConfig (tables, specs);
+
+			var foobarReference = new Reference (new [] { "Foobar", "IsBaz" });
+
+			var sql = foobarReference.Walk (new Sqlizer (foobar, config));
+
+			Assert.AreEqual ("[Foobar].[IsBaz] = 1", sql);
+		}
+
+		[Test]
 		public void SerializeFieldOnAlias ()
 		{
 			var foobar = foobarTable ();
