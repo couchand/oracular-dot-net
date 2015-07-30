@@ -24,6 +24,43 @@ Install the package with NuGet.
 
     NuGet Install-Package Oracular
 
+Load and check your config file.
+
+```csharp
+var config = OracularConfig.LoadFromFile(HostingEnvironment.MapPath(@"~/App_Data/oracular.json"));
+
+config.Check();
+```
+
+Serialize some spec queries.
+
+```csharp
+var customers = config.GetSpec("isCustomerAccount");
+var customersSql = spec.ToSql();
+
+var managers = config.GetSpec("isManagerUser");
+var managersSql = spec.ToSql();
+```
+
+Check a new spec against the config file.
+
+```csharp
+var specSource = "isCustomerAccount(Account) AND isManagerUser(Account.Owner)";
+config.CheckSpec("Account", specSource);
+```
+
+Add the new spec to the live configuration.
+
+```csharp
+config.AddSpec("isCustomerOwnedByManager", "Account", specSource);
+```
+
+Export the updated configuration file.
+
+```csharp
+var updatedJson = config.Export();
+```
+
 more information
 ----------------
 
