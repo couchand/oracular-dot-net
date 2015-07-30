@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 using Oracular.Spec;
 using Oracular.Spec.Ast;
@@ -80,7 +81,7 @@ namespace Oracular
 				nestedSpec.Walk(builder)
 			);
 
-			var nestedJoins = nestedSpec == null ? "" : "\n" + String.Join("\n",
+			var nestedJoins = builder.JoinTables.Count() == 0 ? "" : "\n" + String.Join("\n",
 				builder.JoinTables
 			);
 
