@@ -86,7 +86,7 @@ namespace Oracular
 			);
 
 			var nestedQuery = String.Format (@"[{0}] AS (
-SELECT [{1}].[{2}], 1 [{3}]
+SELECT DISTINCT [{1}].[{2}], 1 [{3}]
 FROM [{1}]
 LEFT JOIN [{4}] ON [{4}].[{5}] = [{1}].[{2}]{6}{7}
 )", withTable, parent.Table, parent.Id, macroField, child.Table, relationship.Id, nestedJoins, nestedWhere);

@@ -622,7 +622,7 @@ namespace Oracular.Tests
 			var annotated = builder.CommonTableExpressions.First ();
 
 			expected = String.Format (@"[AnnotatedBar{0}] AS (
-SELECT [Bar].[Id], 1 [AnyFoo{0}]
+SELECT DISTINCT [Bar].[Id], 1 [AnyFoo{0}]
 FROM [Bar]
 LEFT JOIN [Foo] ON [Foo].[BarId] = [Bar].[Id]
 WHERE ([Foo].[Id] != NULL)
