@@ -11,7 +11,9 @@ namespace Oracular
 	{
 		private static readonly Dictionary<string, Builtin> builtins = new Dictionary<string, Builtin>
 		{
-			{ "any", new PredicateBuiltin("Any") }
+			{ "any", new PredicateBuiltin("Any", " = 1") },
+			{ "none", new PredicateBuiltin("No", " != 1") },
+			{ "all", new PredicateBuiltin("AnyNot", " != 1", true) }
 		};
 
 		public static bool Contains(string name)
@@ -52,8 +54,15 @@ namespace Oracular
 
 	public class PredicateBuiltin : Builtin
 	{
-		public PredicateBuiltin(string name)
-			: base(name){}
+		string suffix;
+		bool invertNested;
+
+		public PredicateBuiltin(string name, string suffix, bool invertNested = false)
+			: base(name)
+		{
+			this.suffix = suffix;
+			this.invertNested = invertNested;
+		}
 
 		public override BuiltinExpansion ExpandMacro (OracularConfig config, OracularTable parent, OracularTable child, Reference reference, AstNode nestedSpec)
 		{
@@ -77,8 +86,10 @@ namespace Oracular
 
 			var builder = new Sqlizer (parent, config);
 
-			var nestedWhere = nestedSpec == null ? "" : String.Format("\nWHERE {0}",
-				nestedSpec.Walk(builder)
+			var nestedWhere = nestedSpec == null ? "" : String.Format("\nWHERE {1}{0}{2}",
+				nestedSpec.Walk(builder),
+				invertNested ? "NOT(" : "",
+				invertNested ? ")" : ""
 			);
 
 			var nestedJoins = builder.JoinTables.Count() == 0 ? "" : "\n" + String.Join("\n",
@@ -98,7 +109,7 @@ LEFT JOIN [{4}] ON [{4}].[{5}] = [{1}].[{2}]{6}{7}
 			expansion.With.Add (nestedQuery);
 			expansion.Join.Add (mainJoin);
 
-			expansion.Where = String.Format ("[{0}].[{1}] = 1", withTable, macroField);
+			expansion.Where = String.Format ("[{0}].[{1}]{2}", withTable, macroField, suffix);
 
 			return expansion;
 		}

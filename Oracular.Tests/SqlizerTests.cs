@@ -599,7 +599,10 @@ namespace Oracular.Tests
 		}
 
 		[Test]
-		public void SerializeReducer()
+		[TestCase("ANY", "Any", " = 1", "1", "", "")]
+		[TestCase("NONE", "No", " != 1", "1", "", "")]
+		[TestCase("ALL", "AnyNot", " != 1", "1", "NOT(", ")")]
+		public void SerializeReducer(string macro, string prefix, string suffix, string value, string inverter1, string inverter2)
 		{
 			var justAnId = new List<FieldConfig>
 			{
@@ -620,19 +623,19 @@ namespace Oracular.Tests
 			var specs = new List<OracularSpec> ();
 			var config = new OracularConfig (tables, specs);
 
-			var anyReference = new Reference (new[]{ "ANY" });
+			var macroReference = new Reference (new[]{ macro });
 			var fooReference = new Reference (new[]{ "Foo" });
 			var idNotNull = new BinaryOperation ("!=",
 				new Reference (new[]{ "Foo", "Id" }),
 				new NullLiteral ()
 			);
 
-			var macroExpansion = new MacroExpansion (anyReference, new AstNode[] { fooReference, idNotNull });
+			var macroExpansion = new MacroExpansion (macroReference, new AstNode[] { fooReference, idNotNull });
 
 			var builder = new Sqlizer (bar, config);
 			var sql = macroExpansion.Walk (builder);
 
-			var expected = String.Format ("[AnnotatedBar{0}].[AnyFoo{0}] = 1", idNotNull.Id);
+			var expected = String.Format ("[AnnotatedBar{0}].[{1}Foo{0}]{2}", idNotNull.Id, prefix, suffix);
 			Assert.AreEqual (expected, sql);
 
 			Assert.AreEqual (1, builder.JoinTables.Count ());
@@ -645,11 +648,11 @@ namespace Oracular.Tests
 			var annotated = builder.CommonTableExpressions.First ();
 
 			expected = String.Format (@"[AnnotatedBar{0}] AS (
-SELECT DISTINCT [Bar].[Id], 1 [AnyFoo{0}]
+SELECT DISTINCT [Bar].[Id], {2} [{1}Foo{0}]
 FROM [Bar]
 LEFT JOIN [Foo] ON [Foo].[BarId] = [Bar].[Id]
-WHERE ([Foo].[Id] != NULL)
-)", idNotNull.Id);
+WHERE {3}([Foo].[Id] != NULL){4}
+)", idNotNull.Id, prefix, value, inverter1, inverter2);
 			Assert.AreEqual (expected, annotated);
 		}
 	}
