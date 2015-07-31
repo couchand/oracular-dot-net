@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Oracular.Spec.Ast
 {
@@ -28,19 +29,24 @@ namespace Oracular.Spec.Ast
 			return walker.WalkBinaryOperation (Operator, Left.Walk (walker), Right.Walk (walker));
 		}
 
+		private static readonly Dictionary<string,string> INVERTED_OP = new Dictionary<string, string>
+		{
+			{ "=", "!=" },
+			{ "!=", "=" },
+			{ "<", ">=" },
+			{ "<=", ">" },
+			{ ">", "<=" },
+			{ ">=", "<" }
+		};
+
 		public override AstNode Invert ()
 		{
-			switch (Operator)
+			if (!INVERTED_OP.ContainsKey (Operator))
 			{
-			case "=": return new BinaryOperation ("!=", Left, Right);
-			case "!=": return new BinaryOperation ("=", Left, Right);
-			case "<": return new BinaryOperation (">=", Left, Right);
-			case "<=": return new BinaryOperation (">", Left, Right);
-			case ">": return new BinaryOperation ("<=", Left, Right);
-			case ">=": return new BinaryOperation ("<", Left, Right);
+				throw new OracularException ("operator unknown: " + Operator);
 			}
 
-			return new LogicalNegation (this);
+			return new BinaryOperation (INVERTED_OP [Operator], Left, Right);
 		}
 	}
 }
