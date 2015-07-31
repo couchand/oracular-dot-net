@@ -655,6 +655,93 @@ WHERE ([Foo].[Id] {3} NULL)
 )", idNotNull.Id, prefix, value, equality);
 			Assert.AreEqual (expected, annotated);
 		}
+
+		[Test]
+		public void SerializeNestedReducers()
+		{
+			var bazFields = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var barFields = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("BazId", null)
+			};
+			var barbazRelationship = new List<ParentConfig>
+			{
+				new ParentConfig("Baz", null, null)
+			};
+			var fooFields = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("BarId", null),
+				new FieldConfig("IsQux", FieldType.Boolean)
+			};
+			var foobarRelationship = new List<ParentConfig>
+			{
+				new ParentConfig("Bar", null, null)
+			};
+			var baz = new OracularTable ("Baz", null, null, bazFields);
+			var tables = new List<OracularTable>
+			{
+				new OracularTable ("Foo", null, foobarRelationship, fooFields),
+				new OracularTable("Bar", null, barbazRelationship, barFields),
+				baz
+			};
+			var specs = new List<OracularSpec> ();
+			var config = new OracularConfig (tables, specs);
+
+			var fooIsQuxNode = new Reference (new [] { "Foo", "IsQux" });
+			var anyFooNode = new MacroExpansion (
+				new Reference (new [] { "ANY" }),
+				new [] {
+					new Reference(new [] { "Foo" }),
+					fooIsQuxNode
+				}
+			);
+
+			var anyBarNode = new MacroExpansion (
+				new Reference(new [] { "ANY" }),
+				new AstNode[] {
+					new Reference(new [] { "Bar" }),
+					anyFooNode
+				}
+			);
+
+			var builder = new Sqlizer (baz, config);
+			var whereClause = anyBarNode.Walk (builder);
+
+			var expected = String.Format ("[AnnotatedBaz{0}].[AnyBar{0}] = 1", anyFooNode.Id);
+			Assert.AreEqual (expected, whereClause);
+
+			Assert.AreEqual (1, builder.JoinTables.Count ());
+			var join = builder.JoinTables.First ();
+
+			expected = String.Format ("LEFT JOIN [AnnotatedBaz{0}] ON [AnnotatedBaz{0}].[Id] = [Baz].[Id]", anyFooNode.Id);
+			Assert.AreEqual (expected, join);
+
+			Assert.AreEqual (2, builder.CommonTableExpressions.Count ());
+
+			var annotatedBar = builder.CommonTableExpressions.First ();
+			expected = String.Format (@"[AnnotatedBar{0}] AS (
+SELECT DISTINCT [Bar].[Id], 1 [AnyFoo{0}]
+FROM [Bar]
+LEFT JOIN [Foo] ON [Foo].[BarId] = [Bar].[Id]
+WHERE [Foo].[IsQux] = 1
+)", fooIsQuxNode.Id);
+			Assert.AreEqual (expected, annotatedBar);
+
+			var annotatedBaz = builder.CommonTableExpressions.Last ();
+			expected = String.Format(@"[AnnotatedBaz{0}] AS (
+SELECT DISTINCT [Baz].[Id], 1 [AnyBar{0}]
+FROM [Baz]
+LEFT JOIN [Bar] ON [Bar].[BazId] = [Baz].[Id]
+LEFT JOIN [AnnotatedBar{1}] ON [AnnotatedBar{1}].[Id] = [Bar].[Id]
+WHERE [AnnotatedBar{1}].[AnyFoo{1}] = 1
+)", anyFooNode.Id, fooIsQuxNode.Id);
+			Assert.AreEqual (expected, annotatedBaz);
+		}
 	}
 }
 

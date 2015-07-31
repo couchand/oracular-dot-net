@@ -84,7 +84,7 @@ namespace Oracular
 
 			var macroField = String.Format ("{0}{1}{2}", Name, child.Table, nestedSpec.Id);
 
-			var builder = new Sqlizer (parent, config);
+			var builder = new Sqlizer (child, config);
 
 			var nestedWhere = nestedSpec == null ? "" : String.Format("\nWHERE {0}",
 				(invertNested ? nestedSpec.Invert() : nestedSpec).Walk(builder)
