@@ -20,6 +20,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkNumberLiteral (Value);
 		}
+
+		public override AstNode Invert ()
+		{
+			throw new OracularException ("number literal cannot be inverted");
+		}
 	}
 }
 

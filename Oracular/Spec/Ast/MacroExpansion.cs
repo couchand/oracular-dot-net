@@ -23,6 +23,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkMacroExpansion (Macro, Arguments);
 		}
+
+		public override AstNode Invert ()
+		{
+			return new LogicalNegation(this);
+		}
 	}
 }
 

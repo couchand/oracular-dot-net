@@ -20,6 +20,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkBooleanLiteral (Value);
 		}
+
+		public override AstNode Invert ()
+		{
+			return new BooleanLiteral (!Value);
+		}
 	}
 }
 

@@ -70,6 +70,11 @@ namespace Oracular.Spec
 			return String.Format ("({0} OR {1})", left, right);
 		}
 
+		public string WalkLogicalNegation(string child)
+		{
+			return String.Format ("NOT({0})", child);
+		}
+
 		public string WalkReference(string[] value)
 		{
 			if (value.Length == 0) {

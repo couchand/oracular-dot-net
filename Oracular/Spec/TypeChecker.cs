@@ -194,8 +194,7 @@ namespace Oracular.Spec
 				throw new TypeCheckException (message);
 			}
 
-			// both are bool
-			return left;
+			return TypeSpecifier.Boolean;
 		}
 
 		public TypeSpecifier WalkLogicalDisjunction(TypeSpecifier left, TypeSpecifier right)
@@ -206,8 +205,18 @@ namespace Oracular.Spec
 				throw new TypeCheckException (message);
 			}
 
-			// both are bool
-			return left;
+			return TypeSpecifier.Boolean;
+		}
+
+		public TypeSpecifier WalkLogicalNegation(TypeSpecifier child)
+		{
+			if (child != TypeSpecifier.Boolean)
+			{
+				var message = String.Format ("invalid type in negation: {0}", child.ToString ());
+				throw new TypeCheckException (message);
+			}
+
+			return TypeSpecifier.Boolean;
 		}
 
 		public TypeSpecifier WalkMacroExpansion(Reference macro, AstNode[] arguments)

@@ -20,6 +20,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkReference (Value);
 		}
+
+		public override AstNode Invert ()
+		{
+			return new LogicalNegation (this);
+		}
 	}
 }
 

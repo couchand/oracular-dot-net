@@ -27,6 +27,21 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkBinaryOperation (Operator, Left.Walk (walker), Right.Walk (walker));
 		}
+
+		public override AstNode Invert ()
+		{
+			switch (Operator)
+			{
+			case "=": return new BinaryOperation ("!=", Left, Right);
+			case "!=": return new BinaryOperation ("=", Left, Right);
+			case "<": return new BinaryOperation (">=", Left, Right);
+			case "<=": return new BinaryOperation (">", Left, Right);
+			case ">": return new BinaryOperation ("<=", Left, Right);
+			case ">=": return new BinaryOperation ("<", Left, Right);
+			}
+
+			return new LogicalNegation (this);
+		}
 	}
 }
 

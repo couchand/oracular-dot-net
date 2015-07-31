@@ -15,6 +15,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkNullLiteral ();
 		}
+
+		public override AstNode Invert ()
+		{
+			throw new OracularException ("null literal cannot be inverted");
+		}
 	}
 }
 

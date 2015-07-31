@@ -15,6 +15,8 @@ namespace Oracular.Spec.Ast
 
 		public abstract T Walk<T> (IPreorderWalker<T> walker, T previous);
 		public abstract T Walk<T> (IPostorderWalker<T> walker);
+
+		public abstract AstNode Invert ();
 	}
 }
 

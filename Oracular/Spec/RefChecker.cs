@@ -57,6 +57,11 @@ namespace Oracular.Spec
 			return tables;
 		}
 
+		public string[] WalkLogicalNegation(string[] tables, AstNode child)
+		{
+			return tables;
+		}
+
 		// this is where the meat is
 
 		public string[] WalkReference(string[] tables, string[] segments)

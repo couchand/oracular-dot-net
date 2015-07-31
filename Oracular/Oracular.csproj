@@ -60,6 +60,7 @@
     <Compile Include="Spec\Ast\BooleanLiteral.cs" />
     <Compile Include="Spec\Sqlizer.cs" />
     <Compile Include="Spec\Ast\MacroExpansion.cs" />
+    <Compile Include="Spec\Ast\LogicalNegation.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

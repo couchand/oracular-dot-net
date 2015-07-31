@@ -25,6 +25,11 @@ namespace Oracular.Spec.Ast
 		{
 			return walker.WalkLogicalDisjunction (Left.Walk (walker), Right.Walk (walker));
 		}
+
+		public override AstNode Invert ()
+		{
+			return new LogicalConjunction (Left.Invert (), Right.Invert ());
+		}
 	}
 }
 

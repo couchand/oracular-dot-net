@@ -14,6 +14,7 @@ namespace Oracular.Spec
 		T WalkBinaryOperation(T previous, string op, AstNode left, AstNode right);
 		T WalkLogicalConjunction(T previous, AstNode left, AstNode right);
 		T WalkLogicalDisjunction(T previous, AstNode left, AstNode right);
+		T WalkLogicalNegation(T previous, AstNode child);
 
 		T WalkReference(T previous, string[] value);
 		T WalkMacroExpansion(T previous, Reference macro, AstNode[] arguments);
@@ -29,6 +30,7 @@ namespace Oracular.Spec
 		T WalkBinaryOperation(string op, T left, T right);
 		T WalkLogicalConjunction(T left, T right);
 		T WalkLogicalDisjunction(T left, T right);
+		T WalkLogicalNegation(T child);
 
 		T WalkReference(string[] value);
 		T WalkMacroExpansion(Reference macro, AstNode[] arguments);
