@@ -46,8 +46,6 @@
     <Compile Include="Spec\Ast\NullLiteral.cs" />
     <Compile Include="Spec\Ast\Reference.cs" />
     <Compile Include="Spec\Ast\BinaryOperation.cs" />
-    <Compile Include="Spec\Ast\LogicalConjunction.cs" />
-    <Compile Include="Spec\Ast\LogicalDisjunction.cs" />
     <Compile Include="Spec\Walker.cs" />
     <Compile Include="Spec\TypeChecker.cs" />
     <Compile Include="Spec\TypeSpecifier.cs" />
@@ -61,6 +59,8 @@
     <Compile Include="Spec\Sqlizer.cs" />
     <Compile Include="Spec\Ast\MacroExpansion.cs" />
     <Compile Include="Spec\Ast\LogicalNegation.cs" />
+    <Compile Include="Spec\Ast\LogicalConjunction.cs" />
+    <Compile Include="Spec\Ast\LogicalDisjunction.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>

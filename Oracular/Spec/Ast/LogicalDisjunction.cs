@@ -2,12 +2,12 @@
 
 namespace Oracular.Spec.Ast
 {
-	public class LogicalConjunction : AstNode
+	public class LogicalDisjunction : AstNode
 	{
 		public readonly AstNode Left;
 		public readonly AstNode Right;
 
-		public LogicalConjunction (AstNode left, AstNode right)
+		public LogicalDisjunction (AstNode left, AstNode right)
 		{
 			this.Left = left;
 			this.Right = right;
@@ -15,7 +15,7 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T>(IPreorderWalker<T> walker, T previous)
 		{
-			var next = walker.WalkLogicalConjunction (previous, Left, Right);
+			var next = walker.WalkLogicalDisjunction (previous, Left, Right);
 			Left.Walk (walker, next);
 			Right.Walk (walker, next);
 			return next;
@@ -23,12 +23,12 @@ namespace Oracular.Spec.Ast
 
 		public override T Walk<T> (IPostorderWalker<T> walker)
 		{
-			return walker.WalkLogicalConjunction (Left.Walk (walker), Right.Walk (walker));
+			return walker.WalkLogicalDisjunction (Left.Walk (walker), Right.Walk (walker));
 		}
 
 		public override AstNode Invert ()
 		{
-			return new LogicalDisjunction (Left.Invert (), Right.Invert ());
+			return new LogicalConjunction (Left.Invert (), Right.Invert ());
 		}
 	}
 }
