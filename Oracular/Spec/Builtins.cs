@@ -86,10 +86,8 @@ namespace Oracular
 
 			var builder = new Sqlizer (parent, config);
 
-			var nestedWhere = nestedSpec == null ? "" : String.Format("\nWHERE {1}{0}{2}",
-				nestedSpec.Walk(builder),
-				invertNested ? "NOT(" : "",
-				invertNested ? ")" : ""
+			var nestedWhere = nestedSpec == null ? "" : String.Format("\nWHERE {0}",
+				(invertNested ? nestedSpec.Invert() : nestedSpec).Walk(builder)
 			);
 
 			var nestedJoins = builder.JoinTables.Count() == 0 ? "" : "\n" + String.Join("\n",

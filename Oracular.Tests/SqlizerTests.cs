@@ -599,10 +599,10 @@ namespace Oracular.Tests
 		}
 
 		[Test]
-		[TestCase("ANY", "Any", " = 1", "1", "", "")]
-		[TestCase("NONE", "No", " != 1", "1", "", "")]
-		[TestCase("ALL", "AnyNot", " != 1", "1", "NOT(", ")")]
-		public void SerializeReducer(string macro, string prefix, string suffix, string value, string inverter1, string inverter2)
+		[TestCase("ANY", "Any", " = 1", "1", "!=")]
+		[TestCase("NONE", "No", " != 1", "1", "!=")]
+		[TestCase("ALL", "AnyNot", " != 1", "1", "=")]
+		public void SerializeReducer(string macro, string prefix, string suffix, string value, string equality)
 		{
 			var justAnId = new List<FieldConfig>
 			{
@@ -651,8 +651,8 @@ namespace Oracular.Tests
 SELECT DISTINCT [Bar].[Id], {2} [{1}Foo{0}]
 FROM [Bar]
 LEFT JOIN [Foo] ON [Foo].[BarId] = [Bar].[Id]
-WHERE {3}([Foo].[Id] != NULL){4}
-)", idNotNull.Id, prefix, value, inverter1, inverter2);
+WHERE ([Foo].[Id] {3} NULL)
+)", idNotNull.Id, prefix, value, equality);
 			Assert.AreEqual (expected, annotated);
 		}
 	}
