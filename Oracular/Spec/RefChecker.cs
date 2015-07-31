@@ -89,7 +89,6 @@ namespace Oracular.Spec
 				throw new RefCheckException (message);
 			}
 
-			// TODO
 			return tables;
 		}
 
@@ -119,15 +118,23 @@ namespace Oracular.Spec
 					throw new OracularException ("reference has no segments");
 				}
 
-				return new List<string>(tables)
-					.Concat(new [] { first.Value [0] })
-					.ToArray();
+				var startWith = tables.Length == 2
+					? new List<string> { tables [1] }
+					: new List<string> (tables);
+
+				var next = startWith
+					.Concat (new [] { first.Value [0] })
+					.ToArray ();
+
+				foreach (var arg in args.Skip(1))
+				{
+					arg.Walk (this, next);
+				}
+
+				return next;
 			}
 
-			var refChecked = macro.Walk (this, tables);
-
-			// TODO
-			return tables;
+			return macro.Walk (this, tables);
 		}
 	}
 

@@ -278,6 +278,48 @@ namespace Oracular.Tests
 			Assert.Contains ("Foobar", result);
 			Assert.Contains ("Potato", result);
 		}
+
+		[Test]
+		public void ExpectNestedSpecToRefcheck()
+		{
+			var justAnId = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null)
+			};
+			var potatoFields = new List<FieldConfig>
+			{
+				new FieldConfig("Id", null),
+				new FieldConfig("FoobarId", null)
+			};
+			var foobarRelationship = new ParentConfig ("Foobar", null, null);
+			var tables = new List<OracularTable>
+			{
+				new OracularTable("Foobar", null, null, justAnId),
+				new OracularTable("Potato", null, new List<ParentConfig>{foobarRelationship}, potatoFields)
+			};
+			var specs = new List<OracularSpec>();
+			var config = new OracularConfig (tables, specs);
+			var checker = new RefChecker (config);
+
+			var fingerlingPotatoes = new MacroExpansion(
+				new Reference(new [] { "isFingerling" }),
+				new [] { new Reference(new [] { "Potato" }) }
+			);
+
+			var call = new MacroExpansion(
+				new Reference(new [] { "ANY" }),
+				new AstNode[] {
+					new Reference(new [] { "Potato" }),
+					fingerlingPotatoes
+				}
+			);
+
+			var initial = new []{ "Foobar" };
+
+			var ex = Assert.Throws<RefCheckException> (() => call.Walk (checker, initial));
+
+			Assert.That (REFERENCE_RE.IsMatch (ex.Message));
+		}
 	}
 }
 
