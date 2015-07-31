@@ -471,6 +471,62 @@ namespace Oracular.Tests
 
 			Assert.AreEqual ("+", rightSide.Operator);
 		}
+
+		[Test]
+		public void ParseLogicalNegation()
+		{
+			var parser = makeParser (
+				referenceToken("NOT"),
+				openParenToken,
+				referenceToken("false"),
+				closeParenToken
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<LogicalNegation> (tree);
+			var asNegation = tree as LogicalNegation;
+
+			Assert.IsInstanceOf<BooleanLiteral> (asNegation.Child);
+		}
+
+		[Test]
+		public void NegationDoesNotRequireParentheses()
+		{
+			var parser = makeParser (
+				referenceToken("NOT"),
+				referenceToken("false")
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<LogicalNegation> (tree);
+			var asNegation = tree as LogicalNegation;
+
+			Assert.IsInstanceOf<BooleanLiteral> (asNegation.Child);
+		}
+
+		[Test]
+		public void NegationBindsTighterThanOperators()
+		{
+			var parser = makeParser (
+				referenceToken("NOT"),
+				referenceToken("false"),
+				operatorToken("="),
+				referenceToken("true")
+			);
+
+			var tree = parser.Parse ();
+
+			Assert.IsInstanceOf<BinaryOperation> (tree);
+			var asBinary = tree as BinaryOperation;
+
+			Assert.IsInstanceOf<LogicalNegation> (asBinary.Left);
+			var asNegation = asBinary.Left as LogicalNegation;
+
+			Assert.IsInstanceOf<BooleanLiteral> (asNegation.Child);
+			Assert.IsInstanceOf<BooleanLiteral> (asBinary.Right);
+		}
 	}
 }
 

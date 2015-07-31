@@ -47,14 +47,14 @@ namespace Oracular.Spec
 
 		public AstNode ParseCurrentToken()
 		{
-			var result = _parseCurrentTokenKernal ();
+			var result = _parseCurrentTokenKernel ();
 
 			GetNextToken (); // consume token
 
 			return result;
 		}
 
-		private AstNode _parseCurrentTokenKernal()
+		private AstNode _parseCurrentTokenKernel()
 		{
 			switch (currentToken.Type)
 			{
@@ -89,6 +89,14 @@ namespace Oracular.Spec
 						return new BooleanLiteral (false);
 					case "true":
 						return new BooleanLiteral (true);
+					case "not":
+						GetNextToken (); // consume not
+
+						// ParseCurrentToken instead of ParseKernel
+						// because not binds tighter than operators
+						var child = _parseCurrentTokenKernel();
+
+						return new LogicalNegation (child);
 					}
 				}
 				if (nextToken.Type == TokenType.OpenParen)
